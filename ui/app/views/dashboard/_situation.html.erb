@@ -1,0 +1,11 @@
+<article id="<%= situation_dom_id(situation) %>" class="feed-card situation-card">
+  <div class="feed-card-header">
+    <div>
+      <p class="eyebrow"><%= situation["airport"] %> | <%= timestamp_label(situation["ts"]) %></p>
+      <h3><%= situation["kind"].to_s.humanize %></h3>
+    </div>
+    <span class="status-pill"><%= Array(situation["icao24s"]).size %> aircraft</span>
+  </div>
+  <p><%= situation["summary"] %></p>
+  <p class="metadata"><%= Array(situation["icao24s"]).join(", ") %></p>
+</article>

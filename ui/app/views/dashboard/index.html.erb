@@ -1,0 +1,114 @@
+<% content_for :title, "FlightWatch" %>
+<%= turbo_stream_from "anomalies" %>
+<%= turbo_stream_from "synthesis" %>
+
+<div
+  class="flightwatch-shell"
+  data-controller="flightwatch"
+  data-flightwatch-frame-value="<%= json_escape(@snapshot[:frame].to_json) %>"
+  data-flightwatch-flags-value="<%= json_escape(@snapshot[:flags].to_json) %>"
+  data-flightwatch-verdicts-value="<%= json_escape(@snapshot[:verdicts].to_json) %>"
+  data-flightwatch-situations-value="<%= json_escape(@snapshot[:situations].to_json) %>"
+  data-flightwatch-mode-value="<%= @snapshot[:mode] %>">
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Boston airspace</p>
+      <h1>FlightWatch</h1>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="icon-button" type="button" data-action="flightwatch#toggleDark" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <span data-flightwatch-target="themeIcon">D</span>
+      </button>
+      <div class="mode-switch" role="group" aria-label="Traffic source">
+        <button type="button" data-flightwatch-target="realtimeButton" data-action="flightwatch#setRealtime">Real-time</button>
+        <button type="button" data-flightwatch-target="demoButton" data-action="flightwatch#setDemo">Demo</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="situation-banner <%= @snapshot[:situations].any? ? "is-visible" : "" %>" data-flightwatch-target="banner">
+    <% if @snapshot[:situations].first %>
+      <strong><%= @snapshot[:situations].first["kind"].to_s.humanize %> at <%= @snapshot[:situations].first["airport"] %></strong>
+      <span><%= @snapshot[:situations].first["summary"] %></span>
+    <% else %>
+      <strong>Situation watch</strong>
+      <span>No synthesized situation yet.</span>
+    <% end %>
+  </section>
+
+  <main class="dashboard-grid">
+    <section class="stage" aria-label="Airspace workspace">
+      <nav class="tabs" aria-label="Dashboard tabs">
+        <button class="tab is-active" type="button" data-tab="map" data-action="flightwatch#switchTab">Map</button>
+        <button class="tab" type="button" data-tab="anomalies" data-action="flightwatch#switchTab">Anomalies</button>
+        <button class="tab" type="button" data-tab="synthesis" data-action="flightwatch#switchTab">Synthesis</button>
+      </nav>
+
+      <div class="panels">
+        <section class="panel is-active map-panel" data-flightwatch-target="panel" data-panel="map" aria-label="Map">
+          <div class="map-canvas" data-flightwatch-target="map"></div>
+        </section>
+
+        <section class="panel feed-panel" data-flightwatch-target="panel" data-panel="anomalies" aria-label="Anomalies">
+          <div class="panel-heading">
+            <p class="eyebrow">Investigator surface</p>
+            <h2>Investigated anomalies</h2>
+          </div>
+          <div id="anomaly-feed" class="feed-list">
+            <% if @snapshot[:anomalies].any? %>
+              <%= render partial: "dashboard/anomaly", collection: @snapshot[:anomalies], as: :anomaly %>
+            <% else %>
+              <div id="anomaly-empty" class="empty-state">No flags have landed on the bus.</div>
+            <% end %>
+          </div>
+        </section>
+
+        <section class="panel feed-panel" data-flightwatch-target="panel" data-panel="synthesis" aria-label="Synthesis">
+          <div class="panel-heading">
+            <p class="eyebrow">Synthesizer report</p>
+            <h2>Situation synthesis</h2>
+          </div>
+          <div id="synthesis-feed" class="feed-list">
+            <% if @snapshot[:situations].any? %>
+              <%= render partial: "dashboard/situation", collection: @snapshot[:situations], as: :situation %>
+            <% else %>
+              <div id="synthesis-empty" class="empty-state">No situation has been synthesized for this window.</div>
+            <% end %>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <aside class="routing-panel" aria-label="Agent routing table">
+      <div class="panel-heading">
+        <p class="eyebrow">Model routing</p>
+        <h2>Agent costs</h2>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th>Model</th>
+            <th>Route</th>
+            <th>Tokens</th>
+            <th>$</th>
+            <th>Latency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @snapshot[:routing].each do |row| %>
+            <tr class="<%= "total-row" if row[:agent] == "TOTAL" %>">
+              <td><%= row[:agent] %></td>
+              <td><%= row[:model] %></td>
+              <td><%= row[:route] %></td>
+              <td><%= number_with_delimiter(row[:tokens]) %></td>
+              <td><%= row[:cost].zero? ? "$0" : number_to_currency(row[:cost], precision: 3) %></td>
+              <td><%= row[:latency] %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </aside>
+  </main>
+</div>
