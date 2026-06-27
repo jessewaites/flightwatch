@@ -1,0 +1,134 @@
+{
+  "name": "flightwatch-boston-demo-2026-06-22",
+  "raw_input": "data/flightwatch-boston-raw-2026-06-22.jsonl",
+  "planted_output": "data/flightwatch-boston-planted-2026-06-22.jsonl",
+  "window": [0, 89],
+  "notes": [
+    "Frame numbers are zero-based offsets into the raw JSONL capture.",
+    "The plant list is the detector answer key and the demo replay schedule.",
+    "The frame-48 pileup includes DAL2351 squawking 7700 so watcher prioritization is visible.",
+    "The frame-50 holding cluster creates the late KBOS climax for the synthesizer."
+  ],
+  "plant": [
+    {
+      "id": "early-rapid-descent",
+      "icao24": "a81005",
+      "callsign": "UAL1117",
+      "rule": "rapid_descent",
+      "from_frame": 12,
+      "to_frame": 14,
+      "vert_rate_fpm": -3400
+    },
+    {
+      "id": "early-going-dark",
+      "icao24": "add5b0",
+      "callsign": "N9905F",
+      "rule": "going_dark",
+      "at_frame": 22,
+      "to_frame": 24,
+      "stale_seconds": 360
+    },
+    {
+      "id": "solo-hold",
+      "icao24": "a4000f",
+      "callsign": "DAL2479",
+      "rule": "holding_pattern",
+      "from_frame": 30,
+      "to_frame": 39,
+      "center_lat": 42.322,
+      "center_lon": -71.055,
+      "radius_deg": 0.012
+    },
+    {
+      "id": "pileup-7700",
+      "icao24": "a390ed",
+      "callsign": "DAL2351",
+      "rule": "emergency_squawk",
+      "squawk": "7700",
+      "from_frame": 48,
+      "to_frame": 50
+    },
+    {
+      "id": "pileup-descent",
+      "icao24": "a1dd2d",
+      "callsign": "RPA5678",
+      "rule": "rapid_descent",
+      "from_frame": 48,
+      "to_frame": 50,
+      "vert_rate_fpm": -3200
+    },
+    {
+      "id": "pileup-dark",
+      "icao24": "ac27a6",
+      "callsign": "SWA1405",
+      "rule": "going_dark",
+      "at_frame": 48,
+      "to_frame": 50,
+      "stale_seconds": 420
+    },
+    {
+      "id": "kbos-hold-cluster-1",
+      "icao24": "a3ff01",
+      "callsign": "KAP32",
+      "rule": "holding_pattern",
+      "from_frame": 50,
+      "to_frame": 60,
+      "center_lat": 42.355,
+      "center_lon": -71.020,
+      "radius_deg": 0.010
+    },
+    {
+      "id": "kbos-hold-cluster-2",
+      "icao24": "a4d80a",
+      "callsign": "KAP1874",
+      "rule": "holding_pattern",
+      "from_frame": 50,
+      "to_frame": 60,
+      "center_lat": 42.365,
+      "center_lon": -71.028,
+      "radius_deg": 0.010
+    },
+    {
+      "id": "kbos-hold-cluster-3",
+      "icao24": "a81005",
+      "callsign": "UAL1117",
+      "rule": "holding_pattern",
+      "from_frame": 50,
+      "to_frame": 60,
+      "center_lat": 42.372,
+      "center_lon": -71.012,
+      "radius_deg": 0.010
+    },
+    {
+      "id": "kbos-hold-cluster-4",
+      "icao24": "a42f79",
+      "callsign": "N369TW",
+      "rule": "holding_pattern",
+      "from_frame": 50,
+      "to_frame": 60,
+      "center_lat": 42.345,
+      "center_lon": -71.006,
+      "radius_deg": 0.010
+    },
+    {
+      "id": "kbos-hold-cluster-5",
+      "icao24": "ac7321",
+      "callsign": "N901CM",
+      "rule": "holding_pattern",
+      "from_frame": 50,
+      "to_frame": 60,
+      "center_lat": 42.382,
+      "center_lon": -71.035,
+      "radius_deg": 0.010
+    },
+    {
+      "id": "late-lost-comms",
+      "icao24": "a81005",
+      "callsign": "UAL1117",
+      "rule": "emergency_squawk",
+      "squawk": "7600",
+      "from_frame": 72,
+      "to_frame": 74
+    }
+  ]
+}

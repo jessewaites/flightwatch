@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-06-27T15:45:24Z",
+  "scored_artifact": "investigator_skill_quality",
+  "planted_capture": "data/flightwatch-boston-planted-2026-06-22.jsonl",
+  "detector_gate": {
+    "status": "PASS",
+    "detector_mode": "reference",
+    "cases_passed": 4,
+    "cases_total": 4
+  },
+  "investigator_gate": {
+    "status": "PASS",
+    "skill_file_present": false,
+    "runs_per_without_skill_case": 3,
+    "with_skill": {
+      "passes": 5,
+      "total": 5,
+      "accuracy": 1.0
+    },
+    "without_skill": {
+      "passes_by_run": [
+        2,
+        2,
+        2
+      ],
+      "worst": {
+        "passes": 2,
+        "total": 5,
+        "accuracy": 0.4
+      },
+      "median": {
+        "passes": 2.0,
+        "total": 5,
+        "accuracy": 0.4
+      }
+    },
+    "delta_accuracy": 0.6
+  }
+}
