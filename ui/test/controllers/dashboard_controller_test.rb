@@ -7,6 +7,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", "FlightWatch"
+    assert_select "a[href=?]", credits_path, text: "Credits"
     assert_select "#anomaly-feed article", minimum: 3
     assert_select "#synthesis-feed article", minimum: 1
     assert_includes response.body, "KBOS"
