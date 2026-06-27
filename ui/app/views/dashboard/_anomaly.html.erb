@@ -1,0 +1,35 @@
+<article id="<%= anomaly_dom_id(anomaly) %>" class="feed-card anomaly-card severity-<%= anomaly[:severity] %>">
+  <div class="feed-card-header">
+    <div>
+      <p class="eyebrow"><%= anomaly[:icao24] %> | <%= timestamp_label(anomaly[:ts]) %></p>
+      <h3><%= anomaly[:rule].to_s.humanize %></h3>
+    </div>
+    <span class="status-pill"><%= anomaly[:severity] %></span>
+  </div>
+
+  <dl class="evidence-grid">
+    <div>
+      <dt>Position</dt>
+      <dd><%= anomaly[:lat] || "?" %>, <%= anomaly[:lon] || "?" %></dd>
+    </div>
+    <div>
+      <dt>Evidence</dt>
+      <dd><%= evidence_label(anomaly[:evidence]) %></dd>
+    </div>
+  </dl>
+
+  <% if anomaly[:verdict] %>
+    <div class="verdict-box">
+      <div class="feed-card-header compact">
+        <strong><%= anomaly[:verdict]["assessment"].to_s.humanize %></strong>
+        <span><%= number_to_percentage(anomaly[:verdict]["confidence"].to_f * 100, precision: 0) %> confidence</span>
+      </div>
+      <p><%= anomaly[:verdict]["summary"] %></p>
+      <% if anomaly[:verdict]["enrichment"].present? %>
+        <p class="metadata"><%= evidence_label(anomaly[:verdict]["enrichment"]) %></p>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="pending-box">Investigator verdict pending</div>
+  <% end %>
+</article>
