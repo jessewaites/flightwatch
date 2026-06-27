@@ -19,6 +19,7 @@ export default class extends Controller {
     this.overviewZoom = 10
     this.closeZoom = 12
     this.markers = new Map()
+    this.trails = new Map()
     this.flags = new Map()
     this.verdicts = new Map()
     this.focusIcao = null
@@ -156,6 +157,8 @@ export default class extends Controller {
       const position = [plane.lat, plane.lon]
       const tip = this.planeTooltip(plane)
 
+      this.updateTrail(plane, position)
+
       if (marker) {
         marker.setLatLng(position)
         marker.setIcon(icon)
@@ -166,6 +169,35 @@ export default class extends Controller {
         this.markers.set(plane.icao24, next)
       }
     })
+  }
+
+  // Accumulate each plane's recent positions (from the frame stream) and draw a dashed trail
+  // of where it has been. Flagged planes get a red trail; everyone else a subtle neutral one.
+  updateTrail(plane, position) {
+    let trail = this.trails.get(plane.icao24)
+    if (!trail) {
+      trail = { coords: [], line: null }
+      this.trails.set(plane.icao24, trail)
+    }
+
+    const last = trail.coords[trail.coords.length - 1]
+    if (last && last[0] === position[0] && last[1] === position[1]) return // no movement, skip
+
+    trail.coords.push(position)
+    if (trail.coords.length > 40) trail.coords.shift() // cap history so it doesn't grow forever
+    if (trail.coords.length < 2) return
+
+    const flagged = plane.state === "flagged" || this.flagFor(plane.icao24)
+    const color = flagged ? "#ef4444" : "#94a3b8"
+
+    if (trail.line) {
+      trail.line.setLatLngs(trail.coords)
+      trail.line.setStyle({ color })
+    } else {
+      trail.line = L.polyline(trail.coords, {
+        color, weight: 1.5, opacity: 0.45, dashArray: "4 5", interactive: false
+      }).addTo(this.map)
+    }
   }
 
   planeIcon(plane) {
