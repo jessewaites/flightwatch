@@ -126,6 +126,12 @@ button {
   font-weight: 800;
 }
 
+.theme-icon {
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+
 .mode-switch {
   display: grid;
   grid-template-columns: 1fr 1fr;
