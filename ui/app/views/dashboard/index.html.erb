@@ -56,11 +56,14 @@
             <h2>Investigated anomalies</h2>
           </div>
           <div id="anomaly-feed" class="feed-list">
-            <% if @snapshot[:anomalies].any? %>
-              <%= render partial: "dashboard/anomaly", collection: @snapshot[:anomalies], as: :anomaly %>
+            <% if @anomalies.any? %>
+              <%= render partial: "dashboard/anomaly", collection: @anomalies, as: :anomaly %>
             <% else %>
               <div id="anomaly-empty" class="empty-state">No flags have landed on the bus.</div>
             <% end %>
+          </div>
+          <div id="anomaly-pagination" class="feed-pagination">
+            <%= render "dashboard/anomaly_load_more", pagy: @anomaly_pagy %>
           </div>
         </section>
 

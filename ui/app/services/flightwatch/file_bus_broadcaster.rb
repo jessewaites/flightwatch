@@ -16,6 +16,8 @@ module Flightwatch
           broadcast_situation(payload)
         when "control"
           broadcast_control(payload)
+        when "tracks"
+          broadcast_frame
         end
       rescue Errno::ENOENT, JSON::ParserError
         nil
@@ -59,6 +61,11 @@ module Flightwatch
 
       def broadcast_control(payload)
         ActionCable.server.broadcast("airspace", { type: "mode", mode: payload["source"] })
+      end
+
+      # A new frame landed in workspace/tracks/ — push the current airspace so the map animates live.
+      def broadcast_frame
+        ActionCable.server.broadcast("airspace", { type: "frame", frame: Workspace.read_frame })
       end
     end
   end

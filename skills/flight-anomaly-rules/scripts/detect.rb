@@ -35,11 +35,14 @@ module FlightWatch
       aircraft.each_with_object([]) do |state, flags|
         next unless usable_aircraft?(state)
 
+        # altitude_outlier is DISABLED: a stretch/snapshot rule that flagged ~80% of airborne
+        # traffic (any plane >6000 ft off the peer median) and is not in the planted scenario, so
+        # it only added noise that drowned the real anomalies and reddened the whole map. The
+        # method is kept for the ADLC "iterate" story; re-enable by adding it back to this chain.
         flag = emergency_squawk_flag(state, ts) ||
                rapid_descent_flag(state, ts) ||
                going_dark_flag(state, ts, buffer) ||
-               holding_pattern_flag(state, ts, buffer) ||
-               altitude_outlier_flag(state, ts, aircraft)
+               holding_pattern_flag(state, ts, buffer)
 
         flags << flag if flag
       rescue StandardError

@@ -204,10 +204,17 @@ export default class extends Controller {
   }
 
   handleMessage(message) {
+    if (message.type === "frame") this.handleFrame(message.frame)
     if (message.type === "flag") this.handleFlag(message.flag, message.frame)
     if (message.type === "verdict") this.handleVerdict(message.verdict)
     if (message.type === "situation") this.handleSituation(message.situation)
     if (message.type === "mode") this.updateModeButtons(message.mode)
+  }
+
+  handleFrame(frame) {
+    if (!frame) return
+    this.frameValue = frame
+    this.renderFrame(frame)
   }
 
   handleFlag(flag, frame) {

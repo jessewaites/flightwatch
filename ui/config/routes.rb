@@ -6,5 +6,6 @@ Rails.application.routes.draw do
   mount ActionCable.server => "/cable"
 
   post "mode", to: "dashboard#mode"
+  get "anomalies", to: "dashboard#anomalies"
   root "dashboard#index"
 end

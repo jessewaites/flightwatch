@@ -42,8 +42,18 @@ module Flightwatch
           .sort_by { |item| -(item["ts"] || item["flag_ts"] || 0).to_i }
       end
 
+      # Newest live frame the producer has written to workspace/tracks/ (zero-padded names sort
+      # chronologically), or nil if the pipeline isn't running yet.
+      def latest_frame_path
+        dir = path.join("tracks")
+        return nil unless dir.exist?
+
+        dir.children.select { |file| file.file? && file.extname == ".json" }
+           .max_by { |file| file.basename.to_s }
+      end
+
       def read_frame(flags = read_collection("flags"))
-        frame = read_json(sample_frame_path) || { "ts" => Time.now.to_i, "aircraft" => [] }
+        frame = read_json(latest_frame_path) || read_json(sample_frame_path) || { "ts" => Time.now.to_i, "aircraft" => [] }
         flagged = flags.to_h { |flag| [ flag["icao24"], flag ] }
 
         aircraft = Array(frame["aircraft"]).map do |plane|

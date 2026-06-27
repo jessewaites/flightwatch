@@ -1,0 +1,8 @@
+<%= turbo_stream.append "anomaly-feed" do %>
+  <%= render partial: "dashboard/anomaly", collection: @anomalies, as: :anomaly %>
+<% end %>
+<%= turbo_stream.replace "anomaly-pagination" do %>
+  <div id="anomaly-pagination" class="feed-pagination">
+    <%= render "dashboard/anomaly_load_more", pagy: @anomaly_pagy %>
+  </div>
+<% end %>

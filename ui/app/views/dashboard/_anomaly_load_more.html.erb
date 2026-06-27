@@ -1,0 +1,10 @@
+<% if pagy && pagy.next %>
+  <%= link_to anomalies_path(page: pagy.next),
+        id: "anomaly-load-more",
+        class: "load-more-button",
+        data: { turbo_stream: true } do %>
+    Load older anomalies <span class="load-more-count">(<%= pagy.count - pagy.to %> more)</span>
+  <% end %>
+<% elsif pagy && pagy.count.positive? %>
+  <p class="feed-pagination-end">All <%= pagy.count %> anomalies shown.</p>
+<% end %>
