@@ -1,0 +1,20 @@
+# secrets — NEVER commit
+.env
+.env.*
+credentials.json
+*.secret
+
+# runtime delegation bus — keep the dirs, ignore the live JSON
+workspace/flags/*
+workspace/verdicts/*
+workspace/situations/*
+workspace/tracks/*
+workspace/control/*
+!workspace/**/.gitkeep
+
+# scratch
+tmp/
+*.log
+.DS_Store
+.venv/
+node_modules/
