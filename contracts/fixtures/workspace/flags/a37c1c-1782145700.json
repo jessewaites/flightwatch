@@ -1,0 +1,1 @@
+{ "icao24": "a37c1c", "ts": 1782145700, "rule": "going_dark", "severity": "medium", "lat": 42.3022, "lon": -70.9188, "evidence": { "gap_s": 320, "last_contact": 1782145380 } }

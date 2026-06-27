@@ -1,0 +1,20 @@
+{
+  "ts": 1782145700,
+  "aircraft": [
+    { "icao24": "a35e3d", "callsign": "DAL2351", "lat": 42.4012, "lon": -71.0488,
+      "baro_alt_ft": 4200, "velocity_kt": 281, "heading": 221.4, "vert_rate_fpm": -2410,
+      "on_ground": false, "squawk": "7700", "last_contact": 1782145700 },
+    { "icao24": "a4996b", "callsign": "DAL855", "lat": 42.4510, "lon": -70.9520,
+      "baro_alt_ft": 6000, "velocity_kt": 248, "heading": 92.1, "vert_rate_fpm": 0,
+      "on_ground": false, "squawk": "6231", "last_contact": 1782145700 },
+    { "icao24": "a37c1c", "callsign": "JBU1151", "lat": 42.3022, "lon": -70.9188,
+      "baro_alt_ft": 9000, "velocity_kt": 320, "heading": 49.8, "vert_rate_fpm": 64,
+      "on_ground": false, "squawk": "4174", "last_contact": 1782145380 },
+    { "icao24": "a3689e", "callsign": "DAL303", "lat": 42.3563, "lon": -71.0101,
+      "baro_alt_ft": null, "velocity_kt": 5, "heading": 78.8, "vert_rate_fpm": null,
+      "on_ground": true, "squawk": null, "last_contact": 1782145700 },
+    { "icao24": "5003bc", "callsign": "BCP001", "lat": 42.3731, "lon": -71.0216,
+      "baro_alt_ft": null, "velocity_kt": 0, "heading": 42.2, "vert_rate_fpm": null,
+      "on_ground": true, "squawk": "2511", "last_contact": 1782145621 }
+  ]
+}

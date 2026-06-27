@@ -1,0 +1,8 @@
+{
+  "id": "kbos-groundstop-1782145820",
+  "ts": 1782145820,
+  "kind": "ground_stop",
+  "airport": "KBOS",
+  "icao24s": ["a4996b", "a37c1c", "a3a0e1", "a5b2c4", "a1d9f7"],
+  "summary": "Five aircraft holding within 10 nm of KBOS inside a two-minute window — pattern consistent with a ground stop at Boston Logan."
+}

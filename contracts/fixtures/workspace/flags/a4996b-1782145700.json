@@ -1,0 +1,1 @@
+{ "icao24": "a4996b", "ts": 1782145700, "rule": "holding_pattern", "severity": "medium", "lat": 42.4510, "lon": -70.9520, "evidence": { "cumulative_turn_deg": 312, "window_s": 105, "radius_nm": 2.6 } }

@@ -1,0 +1,9 @@
+{
+  "icao24": "a35e3d",
+  "ts": 1782145700,
+  "rule": "emergency_squawk",
+  "severity": "high",
+  "lat": 42.4012,
+  "lon": -71.0488,
+  "evidence": { "squawk": "7700" }
+}

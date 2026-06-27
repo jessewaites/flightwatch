@@ -10,6 +10,7 @@ workspace/verdicts/*
 workspace/situations/*
 workspace/tracks/*
 workspace/control/*
+workspace/observe/*
 !workspace/**/.gitkeep
 
 # scratch

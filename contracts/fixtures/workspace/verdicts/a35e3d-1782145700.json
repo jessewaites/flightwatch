@@ -1,0 +1,1 @@
+{ "icao24": "a35e3d", "flag_ts": 1782145700, "assessment": "emergency", "confidence": 0.95, "summary": "DAL2351 squawking 7700 with a 2400 ft/min descent toward KBOS and no benign explanation — treat as a live general emergency.", "enrichment": { "metar": "KBOS 261854Z 21012KT 10SM FEW045 24/12 A3001", "nearest_airport": "KBOS", "aircraft_type": "B739" } }
