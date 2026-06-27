@@ -610,16 +610,17 @@ button {
   background: var(--surface);
   box-shadow: var(--shadow);
   display: grid;
-  place-items: center;
   padding: clamp(16px, 3vw, 32px);
   min-height: 0;
+  overflow: hidden;
 }
 
+/* Fill the (bounded) card and scale to fit; the vh cap is a hard backstop so an SVG with
+   hardcoded dimensions can never overflow the viewport. Photo and QR get identical treatment. */
 .credits-media {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
+  max-height: 58vh;
   object-fit: contain;
   border-radius: 8px;
 }
