@@ -188,14 +188,15 @@ export default class extends Controller {
     if (trail.coords.length < 2) return
 
     const flagged = plane.state === "flagged" || this.flagFor(plane.icao24)
-    const color = flagged ? "#ef4444" : "#94a3b8"
+    const color = flagged ? "#ef4444" : "#2563eb"
+    const weight = flagged ? 3 : 2
 
     if (trail.line) {
       trail.line.setLatLngs(trail.coords)
-      trail.line.setStyle({ color })
+      trail.line.setStyle({ color, weight })
     } else {
       trail.line = L.polyline(trail.coords, {
-        color, weight: 1.5, opacity: 0.45, dashArray: "4 5", interactive: false
+        color, weight, opacity: 0.7, dashArray: "5 6", interactive: false
       }).addTo(this.map)
     }
   }
