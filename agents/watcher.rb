@@ -53,6 +53,8 @@ module FlightWatch
       @ollama_base = options.fetch(:ollama_base)
       @buffer = []
       @seen_track_paths = {}
+      @tokens = 0          # cumulative tokens spent on granite triage this run
+      @frame_tokens = 0    # tokens spent on the current frame
     end
 
     def run
@@ -102,6 +104,7 @@ module FlightWatch
         return
       end
 
+      @frame_tokens = 0
       flags = detect(frame, @buffer)
       ranked = prioritize(flags)
       ranked.each { |flag| write_flag(flag) }
@@ -171,7 +174,21 @@ module FlightWatch
                    .with_temperature(0)
                    .with_params(response_format: { type: "json_object" })
       response = chat.ask(prompt)
-      response.respond_to?(:content) ? response.content : response.to_s
+      content = response.respond_to?(:content) ? response.content : response.to_s
+      tokens = token_count(response, prompt, content)
+      @frame_tokens += tokens
+      @tokens += tokens
+      content
+    end
+
+    # Real token usage from the model response when available (Ollama returns usage), else a
+    # char-based estimate so the count is never silently zero.
+    def token_count(response, prompt, content)
+      if response.respond_to?(:input_tokens) && response.input_tokens
+        response.input_tokens.to_i + response.output_tokens.to_i
+      else
+        (prompt.to_s.length + content.to_s.length) / 4
+      end
     end
 
     def parse_model_order(text)
@@ -220,7 +237,7 @@ module FlightWatch
         "route" => @no_skill ? "deterministic" : "detector+ruby_llm_tier2",
         "frame_ts" => frame["ts"],
         "flags" => flags.map { |flag| flag["icao24"] },
-        "tokens" => 0,
+        "tokens" => @frame_tokens,
         "cost_usd" => 0.0,
         "latency_ms" => nil
       }
@@ -229,8 +246,8 @@ module FlightWatch
 
     def print_routing_summary
       puts "agent\tmodel\troute\ttokens\tcost\tlatency"
-      puts "watcher\t#{@no_skill ? "none (--no-skill)" : @model}\t#{@no_skill ? "deterministic" : "detector+ruby_llm_tier2"}\t0\t$0.00\tlocal"
-      puts "TOTAL\t-\t-\t0\t$0.00\t-"
+      puts "watcher\t#{@no_skill ? "none (--no-skill)" : @model}\t#{@no_skill ? "deterministic" : "detector+ruby_llm_tier2"}\t#{@tokens}\t$0.00\tlocal"
+      puts "TOTAL\t-\t-\t#{@tokens}\t$0.00\t-"
     end
 
     def read_frames(path)

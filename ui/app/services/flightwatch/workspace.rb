@@ -111,11 +111,12 @@ module Flightwatch
       end
 
       def routing_rows(verdicts = read_collection("verdicts"), situations = read_collection("situations"))
+        watcher_tokens = observe_tokens_for("watcher")
         investigator_tokens = verdicts.size * 1_700
         synthesizer_tokens = situations.size * 2_200
 
         [
-          row("Watcher", "granite4:micro", "Ollama local", 0, 0.0, "35 ms"),
+          row("Watcher", "granite4:micro", "Ollama local", watcher_tokens, 0.0, "35 ms"),
           row("Investigator", "Claude frontier", "Anthropic", investigator_tokens, verdicts.size * 0.012, verdicts.any? ? "1.8 s" : "-"),
           row("Synthesizer", "Claude mid/frontier", "Anthropic", synthesizer_tokens, situations.size * 0.018, situations.any? ? "2.4 s" : "-")
         ].tap do |rows|
@@ -137,6 +138,20 @@ module Flightwatch
         JSON.parse(File.read(file))
       rescue Errno::ENOENT, JSON::ParserError
         nil
+      end
+
+      # Sum the tokens an agent has logged to the observe event log (workspace/observe/run.jsonl).
+      # The routing table is a reduction over this log, not a separate accounting path.
+      def observe_tokens_for(agent)
+        log = path.join("observe", "run.jsonl")
+        return 0 unless log.exist?
+
+        total = 0
+        File.foreach(log) do |line|
+          obj = JSON.parse(line) rescue next
+          total += obj["tokens"].to_i if obj["agent"] == agent
+        end
+        total
       end
 
       def anomalies(flags, verdicts)
