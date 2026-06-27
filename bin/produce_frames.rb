@@ -93,6 +93,14 @@ rescue JSON::ParserError, Errno::ENOENT
   "demo"
 end
 
+# Wipe the runtime bus so a mode switch starts a clean run (no stale flags/verdicts/situations
+# from the previous source). @seq stays monotonic, so the watcher still sees new frame files.
+def reset_bus(workspace)
+  %w[flags verdicts situations tracks].each do |dir|
+    Dir[File.join(workspace, dir, "*.json")].each { |f| File.delete(f) rescue nil }
+  end
+end
+
 demo = FlightWatch::Data::ReplayHarness.new(path: options[:replay], loop: options[:loop])
 realtime = LazyRealtime.new do
   creds = FlightWatch::Data::Credentials.load
@@ -119,6 +127,7 @@ if options[:daemon]
     mtime = File.file?(mode_path) ? File.mtime(mode_path) : nil
     if mtime != prev_mtime
       mode = read_mode(mode_path)
+      reset_bus(workspace) # clean slate: clear the previous run's flags/verdicts/situations/tracks
       if mode == "demo"
         demo.rewind
         demo_done = false

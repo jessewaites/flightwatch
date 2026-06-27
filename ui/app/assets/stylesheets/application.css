@@ -56,7 +56,8 @@ button {
 }
 
 .flightwatch-shell {
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -481,12 +482,18 @@ button {
 }
 
 @media (max-width: 980px) {
+  /* Stack into one column and let the page scroll naturally on small screens. */
+  .flightwatch-shell {
+    height: auto;
+    overflow: visible;
+  }
+
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
 
   .feed-aside {
-    max-height: 420px;
+    max-height: 520px;
   }
 }
 

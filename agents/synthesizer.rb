@@ -66,6 +66,11 @@ module FlightWatch
 
     def run_once
       FileUtils.mkdir_p(situations_dir)
+
+      # If the situations dir was cleared out (e.g. a mode switch reset the bus), forget what we've
+      # already written so the new run's situations fire again instead of being deduped away.
+      @written_ids = {} if @written_ids.any? && Dir[File.join(situations_dir, "*.json")].empty?
+
       flags = load_json_files(flags_dir, :flag)
       verdicts = verdicts_by_aircraft(load_json_files(verdicts_dir, :verdict))
       clusters = build_clusters(flags)

@@ -290,7 +290,28 @@ export default class extends Controller {
     if (message.type === "flag") this.handleFlag(message.flag, message.frame)
     if (message.type === "verdict") this.handleVerdict(message.verdict)
     if (message.type === "situation") this.handleSituation(message.situation)
-    if (message.type === "mode") { this.updateModeButtons(message.mode); this.hasFitBounds = false }
+    if (message.type === "mode") this.handleModeChange(message.mode)
+  }
+
+  // A mode switch starts a fresh run (the producer clears the bus), so wipe the stale view:
+  // banner, anomalies feed, planes, and trails all reset; new frames/flags repopulate them.
+  handleModeChange(mode) {
+    this.updateModeButtons(mode)
+    this.hasFitBounds = false
+    this.focusIcao = null
+    this.flags = new Map()
+    this.verdicts = new Map()
+
+    this.bannerTarget.classList.remove("is-visible")
+    this.bannerTarget.innerHTML = "<strong>Situation watch</strong><span>No synthesized situation yet.</span>"
+
+    const feed = document.getElementById("anomaly-feed")
+    if (feed) feed.innerHTML = '<div id="anomaly-empty" class="empty-state">No flags have landed on the bus.</div>'
+
+    this.markers.forEach((marker) => this.map.removeLayer(marker))
+    this.markers = new Map()
+    this.trails.forEach((trail) => { if (trail.line) this.map.removeLayer(trail.line) })
+    this.trails = new Map()
   }
 
   handleFrame(frame) {
