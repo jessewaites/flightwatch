@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "detector_mode": "reference",
+  "detector_mode": "repo",
   "cases": [
     {
       "id": "emergency-squawk-7700",
@@ -33,7 +33,7 @@
         "match_count": 1,
         "pre_fire_count": 0,
         "clean_false_flag_count": 0,
-        "total_flags": 1
+        "total_flags": 2
       }
     },
     {
@@ -63,7 +63,7 @@
       "assertion": "strict rule+aircraft match at or after plant frame, no pre-fire, no clean-aircraft flags",
       "pass": true,
       "evidence": {
-        "first_match_frame": 7,
+        "first_match_frame": 8,
         "match_count": 1,
         "pre_fire_count": 0,
         "clean_false_flag_count": 0,
