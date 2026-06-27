@@ -48,6 +48,18 @@ detected a rule; your job is context, not re-detection.
 - `7700` plus erratic behavior or steep descent with no benign approach/weather explanation ->
   `emergency`.
 
+## Gotchas
+
+- You add context, you do not re-detect. The Watcher already matched a rule; never re-litigate whether
+  the flag should exist.
+- Do not over-escalate normal Boston terminal behavior. A steep descent alone near Logan, or a low
+  aircraft over Boston Harbor on a KBOS arrival path, is usually benign.
+- Read METAR literally. Fog, low ceiling, and low visibility explain conservative approaches and
+  lost-comms procedure -- benign on an approach, not an emergency.
+- `going_dark` low on a KBOS approach is usually a coverage/antenna artifact (benign); `going_dark`
+  mid-cruise over open water is a concern.
+- Output JSON only: exactly the Verdict Template, with no extra prose, keys, or chain-of-thought.
+
 ## Verdict Template
 
 Return exactly:

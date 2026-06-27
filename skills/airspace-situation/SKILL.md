@@ -47,6 +47,13 @@ Use it as background only:
 - Treat benign weather as context, not proof that weather caused the cluster.
 - Do not invent storms, low visibility, wind shear, or runway effects unless the supplied context or verdicts say so.
 
+## Gotchas
+
+- You interpret, you do not detect. Deterministic code already clustered the flags by airport, distance, and time. Do not re-derive membership or second-guess the geometry.
+- Never name a situation from a single flag or aircraft. A real cluster is three or more unique aircraft inside the time and distance window; without that, there is no situation to name.
+- Weather is background, not proof. Do not invent conditions beyond the supplied `weather_context` or verdicts.
+- Output is JSON only: no markdown, comments, confidence scores, chain-of-thought, or extra keys.
+
 ## Situation Templates
 
 ### ground_stop
