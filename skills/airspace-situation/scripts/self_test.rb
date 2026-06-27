@@ -15,8 +15,9 @@ end
 Dir.mktmpdir("flightwatch-synthesizer-") do |workspace|
   flags_dir = File.join(workspace, "flags")
   verdicts_dir = File.join(workspace, "verdicts")
+  weather_dir = File.join(workspace, "weather")
   situations_dir = File.join(workspace, "situations")
-  FileUtils.mkdir_p([flags_dir, verdicts_dir, situations_dir])
+  FileUtils.mkdir_p([flags_dir, verdicts_dir, weather_dir, situations_dir])
 
   ts = 1_782_145_820
   aircraft = [
@@ -54,6 +55,19 @@ Dir.mktmpdir("flightwatch-synthesizer-") do |workspace|
     )
   end
 
+  write_json(
+    File.join(weather_dir, "kbos.json"),
+    {
+      "airport" => "KBOS",
+      "source" => "test-fixture",
+      "fetched_at" => ts,
+      "location" => { "lat" => 42.3656, "lon" => -71.0096 },
+      "summary" => "Open-Meteo KBOS: mainly clear, 68 F, E wind 8 kt gust 12 kt, visibility 10 sm, clouds 25%, no precipitation.",
+      "current" => {},
+      "units" => {}
+    }
+  )
+
   written = FlightWatch::Synthesizer.new(workspace_dir: workspace, use_model: false, once: true).run_once
   raise "expected one situation, wrote #{written.length}" unless written.length == 1
 
@@ -64,6 +78,7 @@ Dir.mktmpdir("flightwatch-synthesizer-") do |workspace|
   raise "expected KBOS, got #{situation["airport"].inspect}" unless situation["airport"] == "KBOS"
   raise "expected five aircraft, got #{situation["icao24s"].length}" unless situation["icao24s"].length == 5
   raise "summary should name a ground stop: #{situation["summary"].inspect}" unless situation["summary"].downcase.include?("ground stop")
+  raise "summary should include weather context: #{situation["summary"].inspect}" unless situation["summary"].include?("Weather context:")
 
   output_path = File.join(situations_dir, "#{situation["id"]}.json")
   raise "expected #{output_path} to be written" unless File.exist?(output_path)

@@ -2,8 +2,8 @@
 #
 # End-to-end pipeline smoke test (offline, deterministic).
 # Runs the whole spine ONCE over the planted capture and asserts the chain:
-#   producer -> watcher -> investigator -> synthesizer
-#   frames   -> flags    -> verdicts     -> situations
+#   weather + producer -> watcher -> investigator -> synthesizer
+#   context + frames   -> flags    -> verdicts     -> situations
 #
 # This is the Phase 2 integration test and the demo insurance: if this passes, the demo works.
 # No network, no ollama, no API key required — investigator/synthesizer run --offline.
@@ -18,7 +18,7 @@ mkdir -p "$WS"
 count() { ls "$WS/$1"/*.json 2>/dev/null | wc -l | tr -d ' '; }
 
 echo "== reset workspace =="
-for d in flags verdicts situations tracks observe; do
+for d in flags verdicts situations tracks observe weather; do
   mkdir -p "$WS/$d"
   find "$WS/$d" -name '*.json' -delete 2>/dev/null
 done
@@ -41,7 +41,11 @@ while [ "$(count flags)" -gt "$(count verdicts)" ] && [ "$i" -lt 200 ]; do
 done
 echo "   verdicts: $(count verdicts)"
 
-echo "== 4. synthesizer: flags+verdicts -> situations (--offline) =="
+echo "== 4. weather context: Open-Meteo fixture -> workspace/weather/ =="
+ruby bin/weather_context.rb --workspace "$WS" --once --offline >/dev/null
+echo "   weather: $(count weather)"
+
+echo "== 5. synthesizer: flags+verdicts+weather -> situations (--offline) =="
 ruby agents/synthesizer.rb --workspace "$WS" --once --offline >/dev/null
 echo "   situations: $(count situations)"
 
