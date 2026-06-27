@@ -10,6 +10,29 @@ Data source: OpenSky Network (https://opensky-network.org). Used non-commerciall
 
 ## Running it
 
+> **Judges / first run — fully offline, no API keys, no network.** Demo mode runs off a planted
+> capture, so it needs **no OpenSky credentials and no `ANTHROPIC_API_KEY`**. Requires **Ruby ≥ 3.2**.
+>
+> ```bash
+> bundle install                  # repo root — agent + eval gems
+> cd ui && bundle install         # Rails UI gems
+> bin/rails tailwindcss:build     # build the CSS once (see "CSS note" below), then: cd ..
+> ```
+> Prove it runs without booting a server:
+> ```bash
+> bin/pipeline_smoke.sh           # full agent chain over the planted capture → PASS
+> ruby evals/run_all.rb           # scored skill delta (with-skill vs --no-skill) → PASS, +0.6 accuracy
+> ```
+> Then the live dashboard:
+> ```bash
+> cd ui && bin/dev                # http://localhost:3000  (also builds CSS via tailwindcss:watch)
+> bin/pipeline                    # another terminal, from repo root; click "Demo" in the UI
+> ```
+> **CSS note:** `ui/app/assets/builds/tailwind.css` is a gitignored build artifact. `bin/dev` builds it
+> automatically (give it a few seconds on first boot). If you instead start the server with
+> `bin/rails server` directly, run `bin/rails tailwindcss:build` first — otherwise pages return
+> `500: asset 'tailwind.css' was not found`.
+
 Two processes: the **Rails UI** and the **agent pipeline**. Demo-vs-realtime is chosen at runtime by
 the UI toggle (`workspace/control/mode.json`) — nothing hardcodes a mode.
 ```bash
