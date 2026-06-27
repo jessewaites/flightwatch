@@ -45,30 +45,13 @@
     <section class="stage" aria-label="Airspace workspace">
       <nav class="tabs" aria-label="Dashboard tabs">
         <button class="tab is-active" type="button" data-tab="map" data-action="flightwatch#switchTab">Map</button>
-        <button class="tab" type="button" data-tab="anomalies" data-action="flightwatch#switchTab">Anomalies</button>
         <button class="tab" type="button" data-tab="synthesis" data-action="flightwatch#switchTab">Synthesis</button>
+        <button class="tab" type="button" data-tab="costs" data-action="flightwatch#switchTab">Costs</button>
       </nav>
 
       <div class="panels">
         <section class="panel is-active map-panel" data-flightwatch-target="panel" data-panel="map" aria-label="Map">
           <div class="map-canvas" data-flightwatch-target="map"></div>
-        </section>
-
-        <section class="panel feed-panel" data-flightwatch-target="panel" data-panel="anomalies" aria-label="Anomalies">
-          <div class="panel-heading">
-            <p class="eyebrow">Investigator surface</p>
-            <h2>Investigated anomalies</h2>
-          </div>
-          <div id="anomaly-feed" class="feed-list">
-            <% if @anomalies.any? %>
-              <%= render partial: "dashboard/anomaly", collection: @anomalies, as: :anomaly %>
-            <% else %>
-              <div id="anomaly-empty" class="empty-state">No flags have landed on the bus.</div>
-            <% end %>
-          </div>
-          <div id="anomaly-pagination" class="feed-pagination">
-            <%= render "dashboard/anomaly_load_more", pagy: @anomaly_pagy %>
-          </div>
         </section>
 
         <section class="panel feed-panel" data-flightwatch-target="panel" data-panel="synthesis" aria-label="Synthesis">
@@ -84,36 +67,55 @@
             <% end %>
           </div>
         </section>
+
+        <section class="panel feed-panel" data-flightwatch-target="panel" data-panel="costs" aria-label="Costs">
+          <div class="panel-heading">
+            <p class="eyebrow">Model routing</p>
+            <h2>Agent costs</h2>
+          </div>
+          <div class="feed-list">
+            <table class="cost-table">
+              <thead>
+                <tr>
+                  <th>Agent</th>
+                  <th>Model</th>
+                  <th>Tokens</th>
+                  <th>$</th>
+                  <th>Latency</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @snapshot[:routing].each do |row| %>
+                  <tr class="<%= "total-row" if row[:agent] == "TOTAL" %>">
+                    <td><%= row[:agent] %></td>
+                    <td><%= row[:model] %></td>
+                    <td><%= number_with_delimiter(row[:tokens]) %></td>
+                    <td><%= row[:cost].zero? ? "$0" : number_to_currency(row[:cost], precision: 3) %></td>
+                    <td><%= row[:latency] %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
     </section>
 
-    <aside class="routing-panel" aria-label="Agent routing table">
+    <aside class="feed-aside" aria-label="Investigated anomalies">
       <div class="panel-heading">
-        <p class="eyebrow">Model routing</p>
-        <h2>Agent costs</h2>
+        <p class="eyebrow">Investigator surface</p>
+        <h2>Investigated anomalies</h2>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Agent</th>
-            <th>Model</th>
-            <th>Tokens</th>
-            <th>$</th>
-            <th>Latency</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @snapshot[:routing].each do |row| %>
-            <tr class="<%= "total-row" if row[:agent] == "TOTAL" %>">
-              <td><%= row[:agent] %></td>
-              <td><%= row[:model] %></td>
-              <td><%= number_with_delimiter(row[:tokens]) %></td>
-              <td><%= row[:cost].zero? ? "$0" : number_to_currency(row[:cost], precision: 3) %></td>
-              <td><%= row[:latency] %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+      <div id="anomaly-feed" class="feed-list">
+        <% if @anomalies.any? %>
+          <%= render partial: "dashboard/anomaly", collection: @anomalies, as: :anomaly %>
+        <% else %>
+          <div id="anomaly-empty" class="empty-state">No flags have landed on the bus.</div>
+        <% end %>
+      </div>
+      <div id="anomaly-pagination" class="feed-pagination">
+        <%= render "dashboard/anomaly_load_more", pagy: @anomaly_pagy %>
+      </div>
     </aside>
   </main>
 </div>

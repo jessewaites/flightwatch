@@ -65,7 +65,7 @@ button {
 
 .topbar,
 .situation-banner,
-.routing-panel,
+.feed-aside,
 .stage {
   border: 1px solid var(--border);
   background: var(--surface);
@@ -367,28 +367,34 @@ button {
   text-align: center;
 }
 
-.routing-panel {
+/* Side panel that always shows the live anomalies feed. */
+.feed-aside {
   min-width: 0;
   border-radius: 8px;
-  padding: 16px;
-  overflow: auto;
+  padding: 18px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface-2);
 }
 
-.routing-panel table {
+/* Routing/cost table, now living in the Costs tab. */
+.cost-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
 }
 
-.routing-panel th,
-.routing-panel td {
+.cost-table th,
+.cost-table td {
   padding: 9px 8px;
   border-bottom: 1px solid var(--border);
   text-align: left;
   vertical-align: top;
 }
 
-.routing-panel th {
+.cost-table th {
   color: var(--muted);
   font-size: 11px;
   text-transform: uppercase;
@@ -479,8 +485,8 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .routing-panel {
-    max-height: 280px;
+  .feed-aside {
+    max-height: 420px;
   }
 }
 
