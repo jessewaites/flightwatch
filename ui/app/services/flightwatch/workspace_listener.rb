@@ -8,7 +8,7 @@ module Flightwatch
         watched_paths.each { |dir| FileUtils.mkdir_p(dir) }
 
         @listener = Listen.to(*watched_paths.map(&:to_s), only: /\.json$/) do |modified, added, _removed|
-          (added + modified).each { |path| FileBusBroadcaster.broadcast(path) }
+          (added + modified).each { |path| Flightwatch::FileBusBroadcaster.broadcast(path) }
         end
 
         @listener.start
