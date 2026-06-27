@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   mount ActionCable.server => "/cable"
 
   get "credits", to: "static_pages#credits"
+  get "evals", to: "static_pages#evals"
   post "mode", to: "dashboard#mode"
   get "anomalies", to: "dashboard#anomalies"
   root "dashboard#index"

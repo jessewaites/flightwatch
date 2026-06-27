@@ -1,0 +1,148 @@
+<% content_for :title, "Evals" %>
+
+<% investigator = @benchmark.fetch("investigator_gate", {}) %>
+<% detector = @benchmark.fetch("detector_gate", {}) %>
+<% with_skill = investigator.fetch("with_skill", {}) %>
+<% without_skill = investigator.fetch("without_skill", {}) %>
+<% without_worst = without_skill.fetch("worst", {}) %>
+<% without_median = without_skill.fetch("median", {}) %>
+<% cases = @evals.fetch("cases", []) %>
+
+<div class="flightwatch-shell evals-shell">
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">FlightWatch evals</p>
+      <h1>Evals</h1>
+    </div>
+
+    <div class="topbar-actions">
+      <%= link_to "Credits", credits_path, class: "utility-button" %>
+      <%= link_to "Dashboard", root_path, class: "utility-button" %>
+    </div>
+  </header>
+
+  <main class="evals-page" aria-label="FlightWatch evaluation results">
+    <section class="evals-hero" aria-label="Eval summary">
+      <div>
+        <p class="eyebrow">Demo receipt</p>
+        <h2>Skills turn raw flags into calibrated aviation judgments.</h2>
+        <p>
+          The scored Investigator gate runs the same flag fixtures with and without
+          <code>skills/flight-investigation/SKILL.md</code>. The skill-aware arm preserves the procedure:
+          explain why a plane was flagged, pull enrichment, and classify benign versus concern versus emergency.
+        </p>
+      </div>
+
+      <dl class="evals-scoreboard" aria-label="Benchmark score">
+        <div>
+          <dt>With skill</dt>
+          <dd><%= number_to_percentage(with_skill.fetch("accuracy", 0).to_f * 100, precision: 0) %></dd>
+          <span><%= with_skill.fetch("passes", 0) %>/<%= with_skill.fetch("total", 0) %> cases pass</span>
+        </div>
+        <div>
+          <dt>No skill</dt>
+          <dd><%= number_to_percentage(without_median.fetch("accuracy", 0).to_f * 100, precision: 0) %></dd>
+          <span>median baseline, <%= without_worst.fetch("passes", 0) %>/<%= without_worst.fetch("total", 0) %> worst run</span>
+        </div>
+        <div>
+          <dt>Delta</dt>
+          <dd>+<%= number_to_percentage(investigator.fetch("delta_accuracy", 0).to_f * 100, precision: 0) %></dd>
+          <span>accuracy lift from the procedural skill</span>
+        </div>
+      </dl>
+    </section>
+
+    <section class="evals-grid" aria-label="Eval gates">
+      <article class="evals-card">
+        <p class="eyebrow">Gate A</p>
+        <h3>Detector regression</h3>
+        <p>
+          Deterministic Ruby rules are checked against planted traffic before the agents run.
+          This keeps detection code separate from model judgment.
+        </p>
+        <dl class="evals-facts">
+          <div>
+            <dt>Status</dt>
+            <dd><%= detector.fetch("status", "unknown") %></dd>
+          </div>
+          <div>
+            <dt>Cases</dt>
+            <dd><%= detector.fetch("cases_passed", 0) %>/<%= detector.fetch("cases_total", 0) %></dd>
+          </div>
+          <div>
+            <dt>Mode</dt>
+            <dd><%= detector.fetch("detector_mode", "unknown") %></dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="evals-card">
+        <p class="eyebrow">Gate B</p>
+        <h3>Investigator skill quality</h3>
+        <p>
+          Fixture flags with known-correct outcomes are scored twice: once with the investigation skill,
+          then repeated as a <code>--no-skill</code> baseline.
+        </p>
+        <dl class="evals-facts">
+          <div>
+            <dt>Status</dt>
+            <dd><%= investigator.fetch("status", "unknown") %></dd>
+          </div>
+          <div>
+            <dt>Baseline runs</dt>
+            <dd><%= investigator.fetch("runs_per_without_skill_case", @evals.fetch("runs_per_without_skill_case", 0)) %></dd>
+          </div>
+          <div>
+            <dt>Skill file</dt>
+            <dd><%= investigator.fetch("skill_file_present", false) ? "present" : "missing" %></dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+
+    <section class="evals-cases" aria-label="Investigator eval cases">
+      <div class="panel-heading">
+        <p class="eyebrow">Case receipts</p>
+        <h2>With skill vs. no skill</h2>
+      </div>
+
+      <div class="evals-case-list">
+        <% if cases.any? %>
+          <% cases.each do |test_case| %>
+            <% no_skill_assessments = test_case.fetch("without_skill_runs", []).map { |run| run.fetch("assessment", "unknown") }.uniq %>
+            <article class="evals-case">
+              <div class="feed-card-header compact">
+                <div>
+                  <p class="eyebrow"><%= test_case.dig("input", "flag", "rule").to_s.humanize %></p>
+                  <h3><%= test_case.fetch("id").tr("-", " ") %></h3>
+                </div>
+                <span class="status-pill"><%= test_case.fetch("expected_assessment", "unknown") %></span>
+              </div>
+
+              <dl class="evals-comparison">
+                <div>
+                  <dt>With skill</dt>
+                  <dd class="<%= test_case.dig("with_skill", "pass") ? "is-pass" : "is-fail" %>">
+                    <%= test_case.dig("with_skill", "assessment") || "unknown" %>
+                  </dd>
+                </div>
+                <div>
+                  <dt>No skill</dt>
+                  <dd><%= no_skill_assessments.join(", ") %></dd>
+                </div>
+                <div>
+                  <dt>Aircraft</dt>
+                  <dd><%= test_case.dig("input", "flag", "icao24") %></dd>
+                </div>
+              </dl>
+
+              <p><%= test_case.fetch("evidence", "") %></p>
+            </article>
+          <% end %>
+        <% else %>
+          <div class="empty-state">No eval cases found. Run <code>ruby evals/run_all.rb</code>.</div>
+        <% end %>
+      </div>
+    </section>
+  </main>
+</div>
