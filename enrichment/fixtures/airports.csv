@@ -1,0 +1,6 @@
+id,ident,type,name,latitude_deg,longitude_deg,elevation_ft,continent,iso_country,iso_region,municipality,scheduled_service,gps_code,iata_code,local_code,home_link,wikipedia_link,keywords
+3448,KBOS,large_airport,General Edward Lawrence Logan International Airport,42.364347,-71.005181,20,NA,US,US-MA,Boston,yes,KBOS,BOS,BOS,https://www.massport.com/logan-airport/,https://en.wikipedia.org/wiki/Logan_International_Airport,Logan
+3470,KBED,medium_airport,Laurence G Hanscom Field,42.469944,-71.289001,133,NA,US,US-MA,Bedford,yes,KBED,BED,BED,,https://en.wikipedia.org/wiki/Hanscom_Field,Hanscom
+3462,KOWD,medium_airport,Norwood Memorial Airport,42.190498,-71.172897,49,NA,US,US-MA,Norwood,no,KOWD,OWD,OWD,,https://en.wikipedia.org/wiki/Norwood_Memorial_Airport,Norwood
+3468,KBVY,medium_airport,Beverly Regional Airport,42.584202,-70.916496,107,NA,US,US-MA,Beverly,no,KBVY,BVY,BVY,,https://en.wikipedia.org/wiki/Beverly_Regional_Airport,Beverly
+3474,KMHT,medium_airport,Manchester Boston Regional Airport,42.932598,-71.435699,266,NA,US,US-NH,Manchester,yes,KMHT,MHT,MHT,,https://en.wikipedia.org/wiki/Manchester-Boston_Regional_Airport,Manchester
