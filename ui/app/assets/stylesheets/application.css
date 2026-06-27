@@ -645,6 +645,81 @@ button:disabled {
   background: #ffffff;
 }
 
+/* Brand title in the topbar doubles as a home link, styled to look like plain text. */
+.brand-home {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-home:hover h1 {
+  text-decoration: underline;
+}
+
+/* --- About modal --- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(8, 14, 18, 0.6);
+}
+
+.modal-backdrop.is-open {
+  display: flex;
+}
+
+.modal-card {
+  position: relative;
+  max-width: 720px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: clamp(24px, 4vw, 44px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  text-align: left;
+}
+
+.modal-card h2 {
+  margin: 0 0 18px;
+  font-size: clamp(20px, 2.4vw, 28px);
+}
+
+.modal-card p {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: clamp(14px, 1.4vw, 16px);
+  line-height: 1.6;
+}
+
+.modal-card p:last-child {
+  margin-bottom: 0;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: var(--text);
+}
+
 /* --- Evals page --- */
 .evals-shell {
   height: auto;
@@ -656,6 +731,54 @@ button:disabled {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+/* Evals/Tests tab bar on the (scrolling) evals page. Reuses .tabs/.tab styling but its
+   panels toggle with display so the document still flows and scrolls normally. */
+.evals-tabs {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.tab-panel {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tab-panel.is-active {
+  display: flex;
+}
+
+.tests-prose {
+  color: var(--muted);
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 1.5;
+  max-width: 820px;
+}
+
+.tests-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tests-table th,
+.tests-table td {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tests-table th {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tests-table td.is-pass {
+  color: var(--accent);
+  font-weight: 800;
 }
 
 .evals-hero,

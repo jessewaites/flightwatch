@@ -11,14 +11,31 @@
   data-flightwatch-situations-value="<%= json_escape(@snapshot[:situations].to_json) %>"
   data-flightwatch-mode-value="<%= @snapshot[:mode] %>">
   <header class="topbar">
-    <div>
+    <%= link_to root_path, class: "brand-home", "aria-label": "Back to dashboard" do %>
       <p class="eyebrow">Boston airspace</p>
       <h1>FlightWatch</h1>
-    </div>
+    <% end %>
 
     <div class="topbar-actions">
       <%= link_to "Evals", evals_path, class: "utility-button" %>
       <%= link_to "Credits", credits_path, class: "utility-button" %>
+
+      <span data-controller="modal">
+        <button class="utility-button" type="button" data-action="modal#open">About</button>
+
+        <div class="modal-backdrop" data-modal-target="dialog" data-action="click->modal#closeBackdrop">
+          <div class="modal-card" role="dialog" aria-modal="true" aria-label="About FlightWatch">
+            <button class="modal-close" type="button" data-action="modal#close" aria-label="Close">&times;</button>
+            <h2>About FlightWatch</h2>
+            <p>
+              This multi-agent architecture uses a file-based workspace to isolate context across three distinct, specialized scopes, ensuring system efficiency and structural clarity. The Watcher provides wide and shallow coverage by constantly scanning telemetry across all planes for known trouble signs using a cheap, local model. When an anomaly is spotted, it writes a flag file that triggers the Investigator, an expensive frontier model that conducts a narrow, deep analysis by enriching the flagged plane with localized context like weather and airport tracks. Concurrently, the Synthesizer tracks all flags over a temporal window to identify emergent, macro-level patterns (such as ground stops) that a single-plane view would miss. This strategic separation ensures that operational costs scale strictly with the number of anomalies detected rather than total traffic volume, while evaluations prove this skill-equipped approach catches complex vulnerabilities that standard baselines overlook.
+            </p>
+            <p>
+              By decoupling these agents through a framework-agnostic delegation bus using structured JSON contracts, the system avoids the &ldquo;context mush&rdquo; of a single-agent architecture and allows for seamless, parallel development. Rather than relying on rigid, in-process frameworks like LangChain, this file-based handoff exposes clean boundaries that make per-agent model routing explicit and highly customizable. Furthermore, the architecture relies on rule-based detection rooted in established aviation conventions rather than statistical training data, eliminating the need for historical corpora.
+</p>
+          </div>
+        </div>
+      </span>
       <button class="icon-button" type="button" data-action="flightwatch#toggleDark" title="Toggle dark mode" aria-label="Toggle dark mode">
         <span data-flightwatch-target="themeIcon" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="theme-icon">

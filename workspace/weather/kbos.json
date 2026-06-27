@@ -1,32 +1,29 @@
 {
   "airport": "KBOS",
-  "source": "open-meteo-mcp",
-  "fetched_at": 1782583078,
+  "source": "open-meteo-mcp-fallback",
+  "fetched_at": 1782586435,
   "location": {
-    "lat": 42.35753,
-    "lon": -71.02687
+    "lat": 42.3656,
+    "lon": -71.0096
   },
-  "summary": "Open-Meteo KBOS: mainly clear, 70 F, E wind 9.8 kt gust 12 kt, visibility 8.5 sm, clouds 22%, no precipitation.",
+  "summary": "Open-Meteo KBOS: mainly clear, 68 F, E wind 8 kt gust 12 kt, visibility 10 sm, clouds 25%, no precipitation.",
   "current": {
-    "time": "2026-06-27T13:45",
-    "interval": 900,
-    "temperature_2m": 69.5,
+    "time": "2026-06-27T18:53Z",
+    "temperature_2m": 68.0,
     "weather_code": 1,
-    "visibility": 44619.42,
-    "wind_speed_10m": 9.8,
-    "wind_direction_10m": 84,
-    "wind_gusts_10m": 12.2,
-    "cloud_cover": 22,
-    "precipitation": 0
+    "visibility": 52800.0,
+    "wind_speed_10m": 8.0,
+    "wind_direction_10m": 80,
+    "wind_gusts_10m": 12.0,
+    "cloud_cover": 25,
+    "precipitation": 0.0
   },
   "units": {
-    "time": "iso8601",
-    "interval": "seconds",
-    "temperature_2m": "°F",
+    "temperature_2m": "F",
     "weather_code": "wmo code",
     "visibility": "ft",
     "wind_speed_10m": "kn",
-    "wind_direction_10m": "°",
+    "wind_direction_10m": "deg",
     "wind_gusts_10m": "kn",
     "cloud_cover": "%",
     "precipitation": "inch"

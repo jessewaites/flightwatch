@@ -2,10 +2,10 @@
 
 <div class="flightwatch-shell credits-shell">
   <header class="topbar">
-    <div>
+    <%= link_to root_path, class: "brand-home", "aria-label": "Back to dashboard" do %>
       <p class="eyebrow">FlightWatch credits</p>
       <h1>Jesse Waites</h1>
-    </div>
+    <% end %>
 
     <div class="topbar-actions">
       <%= link_to "Evals", evals_path, class: "utility-button" %>
