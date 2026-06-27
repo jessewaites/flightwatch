@@ -3,7 +3,7 @@
   "scored_artifact": "investigator_skill_quality",
   "implementation": "deterministic_fixture_judge",
   "skill_under_test": "skills/flight-investigation/SKILL.md",
-  "skill_file_present": false,
+  "skill_file_present": true,
   "runs_per_without_skill_case": 3,
   "cases": [
     {

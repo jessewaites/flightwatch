@@ -115,7 +115,7 @@ module FlightWatch
       end
 
       def holding_pattern_case
-        headings = [350, 20, 60, 100, 140, 180, 220, 260]
+        headings = [350, 20, 60, 100, 140, 180, 220, 260, 300]
         frames = headings.each_with_index.map do |heading, index|
           angle = index * 40.0 * Math::PI / 180.0
           target = base_aircraft("targethold", 4000 + index * 10).merge(

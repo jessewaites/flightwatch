@@ -28,6 +28,11 @@ start. `INTERVAL=1.0 bin/pipeline` for a faster replay.
 bin/pipeline_smoke.sh     # runs the spine once over the planted capture, asserts the full chain
 ```
 
+**Eval gate:**
+```bash
+ruby evals/run_all.rb     # emits evals/evals.json and benchmark.json
+```
+
 **Pieces, individually:**
 ```bash
 ruby bin/produce_frames.rb --reset            # data layer -> workspace/tracks/ (the frame bus)
@@ -47,5 +52,12 @@ Online mode: drop `--offline`, set `ANTHROPIC_API_KEY`, and put OpenSky creds in
 - `evals/` planted-anomaly eval (with-skill vs --no-skill)
 - `ui/` stripped Rails + Action Cable + Leaflet + Tailwind (created via `rails new`)
 - `workspace/` runtime delegation bus (flags/ verdicts/ situations/ tracks/)
+
+## Judging artifacts
+
+- ADLC worksheet: `docs/adlc-worksheet.md`
+- Model-selection rationale: `docs/model-selection-rationale.md`
+- Eval aggregate: `benchmark.json`
+- Scored cases: `evals/evals.json`
 
 License: MIT
