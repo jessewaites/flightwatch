@@ -90,6 +90,17 @@ module Flightwatch
         source
       end
 
+      # Clear the runtime bus so a mode switch starts a clean run, regardless of whether the
+      # producer is running. Keeps the map, feed, and pagination consistent with the bus.
+      def reset_bus
+        %w[flags verdicts situations tracks].each do |kind|
+          dir = path.join(kind)
+          next unless dir.exist?
+
+          dir.children.each { |file| file.delete if file.file? && file.extname == ".json" }
+        end
+      end
+
       def anomaly_for(flag_or_verdict)
         icao24 = flag_or_verdict["icao24"]
         flag_ts = flag_or_verdict["ts"] || flag_or_verdict["flag_ts"]

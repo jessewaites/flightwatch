@@ -307,6 +307,8 @@ export default class extends Controller {
 
     const feed = document.getElementById("anomaly-feed")
     if (feed) feed.innerHTML = '<div id="anomaly-empty" class="empty-state">No flags have landed on the bus.</div>'
+    const pagination = document.getElementById("anomaly-pagination")
+    if (pagination) pagination.innerHTML = ""
 
     this.markers.forEach((marker) => this.map.removeLayer(marker))
     this.markers = new Map()

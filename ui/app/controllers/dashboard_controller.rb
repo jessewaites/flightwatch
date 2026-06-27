@@ -22,6 +22,7 @@ class DashboardController < ApplicationController
 
   def mode
     source = Flightwatch::Workspace.write_mode(params[:source])
+    Flightwatch::Workspace.reset_bus # clean slate on every toggle, independent of the producer
     Flightwatch::FileBusBroadcaster.broadcast(Flightwatch::Workspace.path.join("control", "mode.json"))
 
     render json: { source: source }
