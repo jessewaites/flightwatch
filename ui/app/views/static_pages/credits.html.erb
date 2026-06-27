@@ -12,19 +12,24 @@
     </div>
   </header>
 
+  <section class="credits-intro">
+    <p class="eyebrow">Connect after the demo</p>
+    <h2>Hi, my name is Jesse Waites</h2>
+    <p>
+      I love working with applied AI. You can learn more about me on my website,
+      <%= link_to "jessewaites.com", "https://jessewaites.com", class: "credits-inline-link" %>.
+      If you'd like to discuss AI or software engineering, add me on
+      <%= link_to "LinkedIn", "https://www.linkedin.com/in/jessewaites/", class: "credits-inline-link" %>.
+    </p>
+  </section>
+
   <main class="credits-stage" aria-label="Credits">
-    <section class="credits-intro">
-      <p class="eyebrow">Connect after the demo</p>
-      <h2>Jesse Waites</h2>
-      <p>
-        I built FlightWatch as a multi-agent airspace anomaly detection demo over Boston.
-        Scan the code to add me on LinkedIn.
-      </p>
-      <%= link_to "linkedin.com/in/jessewaites", "https://www.linkedin.com/in/jessewaites/", class: "credits-link" %>
+    <section class="credits-card" aria-label="Photo">
+      <%= image_tag "jw.jpeg", alt: "Jesse Waites", class: "credits-media" %>
     </section>
 
-    <section class="qr-panel" aria-label="LinkedIn QR code">
-      <%= image_tag "jesse-linkedin-qr.svg", alt: "QR code for Jesse Waites on LinkedIn", class: "linkedin-qr" %>
+    <section class="credits-card" aria-label="LinkedIn QR code">
+      <%= image_tag "jesse-linkedin-qr.svg", alt: "QR code for Jesse Waites on LinkedIn", class: "credits-media linkedin-qr" %>
     </section>
   </main>
 </div>
