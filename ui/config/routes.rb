@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   get "credits", to: "static_pages#credits"
   post "mode", to: "dashboard#mode"
+  post "synthesis", to: "dashboard#synthesis"
   get "anomalies", to: "dashboard#anomalies"
   root "dashboard#index"
 end

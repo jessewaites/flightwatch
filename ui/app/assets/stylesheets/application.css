@@ -262,6 +262,10 @@ button {
 }
 
 .panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 14px;
 }
 
@@ -358,8 +362,18 @@ button {
 }
 
 .verdict-box p,
-.situation-card p {
+.situation-card p,
+.situation-summary p {
   margin: 10px 0 0;
+}
+
+.situation-summary p:first-child {
+  margin-top: 10px;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.68;
 }
 
 .pending-box,
