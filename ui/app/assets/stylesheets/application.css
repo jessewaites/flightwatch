@@ -593,7 +593,6 @@ button:disabled {
 }
 
 .credits-intro p {
-  max-width: 780px;
   margin: 12px 0 0;
   color: var(--muted);
   font-size: clamp(15px, 1.5vw, 19px);
@@ -610,14 +609,13 @@ button:disabled {
   text-decoration: underline;
 }
 
-/* Two equal halves: photo on the left, QR on the right, matched in size. */
+/* A single, centered QR card. */
 .credits-stage {
   flex: 1;
   min-height: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: minmax(0, 1fr); /* bound the row so the media fits to height, no overflow */
-  gap: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .credits-card {
@@ -626,17 +624,19 @@ button:disabled {
   background: var(--surface);
   box-shadow: var(--shadow);
   display: grid;
+  place-items: center;
   padding: clamp(16px, 3vw, 32px);
   min-height: 0;
   overflow: hidden;
 }
 
-/* Fill the (bounded) card and scale to fit; the vh cap is a hard backstop so an SVG with
-   hardcoded dimensions can never overflow the viewport. Photo and QR get identical treatment. */
+/* Scale the QR to fit; the vh cap is a hard backstop so an SVG with
+   hardcoded dimensions can never overflow the viewport. */
 .credits-media {
   width: 100%;
   height: 100%;
-  max-height: 58vh;
+  max-width: 280px;
+  max-height: 280px;
   object-fit: contain;
   border-radius: 8px;
 }
@@ -809,11 +809,6 @@ button:disabled {
 }
 
 @media (max-width: 980px) {
-  .credits-stage {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto; /* stack and let the page scroll on small screens */
-  }
-
   .evals-hero,
   .evals-grid,
   .evals-case-list {
