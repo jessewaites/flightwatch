@@ -149,6 +149,7 @@ export default class extends Controller {
   renderFrame(frame) {
     if (!frame || !Array.isArray(frame.aircraft)) return
 
+    const points = []
     frame.aircraft.forEach((plane) => {
       if (!plane.lat || !plane.lon) return
 
@@ -156,6 +157,7 @@ export default class extends Controller {
       const icon = this.planeIcon(plane)
       const position = [plane.lat, plane.lon]
       const tip = this.planeTooltip(plane)
+      points.push(position)
 
       this.updateTrail(plane, position)
 
@@ -169,6 +171,23 @@ export default class extends Controller {
         this.markers.set(plane.icao24, next)
       }
     })
+
+    this.maybeFitBounds(points)
+  }
+
+  // Frame the map to the planes once on load (and again after a mode toggle): zoomed in enough to
+  // show them all with a little padding, but no further. The investigation choreography flies back
+  // to this same framing after each verdict.
+  maybeFitBounds(points) {
+    if (this.hasFitBounds || !this.map || points.length === 0) return
+
+    if (points.length === 1) {
+      this.fittedBounds = L.latLng(points[0]).toBounds(8000) // ~8km box around a lone plane
+    } else {
+      this.fittedBounds = L.latLngBounds(points).pad(0.15)
+    }
+    this.map.fitBounds(this.fittedBounds, { maxZoom: 12, animate: false })
+    this.hasFitBounds = true
   }
 
   // Accumulate each plane's recent positions (from the frame stream) and draw a dashed trail
@@ -271,7 +290,7 @@ export default class extends Controller {
     if (message.type === "flag") this.handleFlag(message.flag, message.frame)
     if (message.type === "verdict") this.handleVerdict(message.verdict)
     if (message.type === "situation") this.handleSituation(message.situation)
-    if (message.type === "mode") this.updateModeButtons(message.mode)
+    if (message.type === "mode") { this.updateModeButtons(message.mode); this.hasFitBounds = false }
   }
 
   handleFrame(frame) {
@@ -307,7 +326,11 @@ export default class extends Controller {
     window.setTimeout(() => {
       this.focusIcao = null
       this.renderFrame(this.frameValue)
-      this.map.flyTo(this.overviewCenter, this.overviewZoom, { duration: 1.2 })
+      if (this.fittedBounds) {
+        this.map.flyToBounds(this.fittedBounds, { maxZoom: 12, duration: 1.2 })
+      } else {
+        this.map.flyTo(this.overviewCenter, this.overviewZoom, { duration: 1.2 })
+      }
     }, 1500)
   }
 
