@@ -33,6 +33,7 @@ Implemented components:
 - Data replay and normalized frame production in `data/` and `bin/produce_frames.rb`.
 - Watcher, Investigator, and Synthesizer agents in `agents/`.
 - Three custom skills in `skills/`: `flight-anomaly-rules`, `flight-investigation`, and `airspace-situation`.
+- Open-Meteo weather context via MCP: `bin/weather_context.rb` (through `enrichment/weather_context`) pulls Boston weather from the `open-meteo-mcp-server` and writes `workspace/weather/kbos.json`. The Synthesizer reads this file per flag cluster and uses it as background to name weather-driven situations. This is the only MCP usage in the system, and it sits outside the agent-to-agent file bus.
 - Offline planted scenario and eval gates in `evals/`.
 - Rails plus Leaflet dashboard in `ui/`.
 - End-to-end process wiring through `bin/pipeline` and `Procfile`.
