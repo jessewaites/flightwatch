@@ -34,9 +34,16 @@ module Flightwatch
         }
       end
 
+      # Live bus only. Fixtures are an opt-in dev convenience (FLIGHTWATCH_FIXTURES=1) for working on
+      # the UI without running the agents — NEVER a silent fallback, or an empty bus shows fake data
+      # (the stale "ground stop"/"runway closure" banner problem).
+      def use_fixtures?
+        ENV["FLIGHTWATCH_FIXTURES"] == "1"
+      end
+
       def read_collection(kind)
         files = json_files(path.join(kind))
-        files = json_files(fixture_path.join(kind)) if files.empty?
+        files = json_files(fixture_path.join(kind)) if files.empty? && use_fixtures?
 
         files.filter_map { |file| read_json(file) }
           .sort_by { |item| -(item["ts"] || item["flag_ts"] || 0).to_i }
@@ -53,7 +60,9 @@ module Flightwatch
       end
 
       def read_frame(flags = read_collection("flags"))
-        frame = read_json(latest_frame_path) || read_json(sample_frame_path) || { "ts" => Time.now.to_i, "aircraft" => [] }
+        frame = read_json(latest_frame_path)
+        frame ||= read_json(sample_frame_path) if use_fixtures?
+        frame ||= { "ts" => Time.now.to_i, "aircraft" => [] }
         flagged = flags.to_h { |flag| [ flag["icao24"], flag ] }
 
         aircraft = Array(frame["aircraft"]).map do |plane|
@@ -112,6 +121,8 @@ module Flightwatch
       end
 
       def read_json(file)
+        return nil if file.nil?
+
         JSON.parse(File.read(file))
       rescue Errno::ENOENT, JSON::ParserError
         nil

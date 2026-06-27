@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+#
+# FlightWatch — start the agent pipeline (the BACKEND processes only).
+# Boots: frame producer (toggle-aware) + watcher + investigator + synthesizer, all against workspace/.
+# The Rails UI is a separate process: `cd ui && bin/dev`.
+#
+# This script does NOT choose demo vs realtime — the UI toggle does, via workspace/control/mode.json.
+# The producer follows that toggle at runtime: realtime -> live OpenSky, demo -> planted replay.
+#
+#   bin/pipeline                 # start the pipeline (investigator/synthesizer offline; ollama-optional)
+#   INTERVAL=1.0 bin/pipeline    # faster demo replay (default 1.5s/frame)
+#
+# Ctrl-C stops everything.
+
+set -uo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+WS="$ROOT/workspace"
+INTERVAL="${INTERVAL:-1.5}"
+
+echo "FlightWatch — starting agent pipeline (source is controlled by the UI toggle)"
+
+# Reset the runtime bus for a clean start (keeps the dir structure / .gitkeep).
+for d in flags verdicts situations tracks observe; do
+  mkdir -p "$WS/$d"
+  find "$WS/$d" -name '*.json' -delete 2>/dev/null
+  find "$WS/$d" -name '*.jsonl' -delete 2>/dev/null
+done
+# Initialise the toggle to realtime ONLY if it has never been set — the UI owns it from then on.
+mkdir -p "$WS/control"
+[ -f "$WS/control/mode.json" ] || echo '{"source":"realtime"}' > "$WS/control/mode.json"
+echo "  current source: $(ruby -rjson -e 'puts (JSON.parse(File.read(ARGV[0]))["source"] rescue "demo")' "$WS/control/mode.json")  (change it with the UI toggle)"
+
+# ollama present? -> watcher uses granite4:micro for tier-2 triage; else deterministic fallback
+WATCHER_SKILL="--no-skill"
+if curl -sf http://localhost:11434/api/tags >/dev/null 2>&1; then
+  WATCHER_SKILL=""
+  echo "  ollama up   -> watcher tier-2 triage via granite4:micro"
+else
+  echo "  ollama down -> watcher deterministic tier-2 (run 'ollama serve' for the model-triage story)"
+fi
+
+pids=()
+cleanup() { echo; echo "stopping pipeline..."; for p in "${pids[@]}"; do kill "$p" 2>/dev/null || true; done; wait 2>/dev/null; }
+trap cleanup EXIT INT TERM
+
+echo "  starting investigator (offline) + synthesizer (offline) + watcher + frame producer..."
+ruby agents/investigator.rb --workspace "$WS" --offline --poll 0.4 & pids+=($!)
+ruby agents/synthesizer.rb  --workspace "$WS" --offline           & pids+=($!)
+ruby agents/watcher.rb      --workspace "$WS" --tracks "$WS/tracks" --poll 0.4 $WATCHER_SKILL & pids+=($!)
+ruby bin/produce_frames.rb  --workspace "$WS" --interval "$INTERVAL" --daemon & pids+=($!)
+
+echo "pipeline up. Toggle Real-time/Demo in the UI to choose the source. Ctrl-C to stop."
+wait

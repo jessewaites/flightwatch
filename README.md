@@ -9,17 +9,19 @@ Data source: OpenSky Network (https://opensky-network.org). Used non-commerciall
 
 ## Running it
 
-**Offline demo (no network/keys needed):**
+Two processes: the **Rails UI** and the **agent pipeline**. Demo-vs-realtime is chosen at runtime by
+the UI toggle (`workspace/control/mode.json`) — nothing hardcodes a mode.
 ```bash
 # terminal 1 (optional, for the watcher's model triage): ollama serve   # needs granite4:micro
 # terminal 2 (the dashboard):
 cd ui && bundle install && bin/dev          # http://localhost:3000  (reads ../workspace)
-# terminal 3 (the pipeline):
-bin/demo                                     # resets the bus, plays the planted replay
+# terminal 3 (the agent pipeline):
+bin/pipeline                                 # frame producer + watcher + investigator + synthesizer
 ```
-`bin/demo` boots the frame producer + all three agents against `workspace/`, in `--offline` mode
-(investigator/synthesizer use local rules; watcher falls back to deterministic triage if ollama is
-down). Use `bin/demo --with-ui` to also boot Rails. `INTERVAL=1.0 bin/demo` for a faster replay.
+`bin/pipeline` boots the backend processes against `workspace/` (investigator/synthesizer `--offline`;
+watcher falls back to deterministic triage if ollama is down). The **frame producer follows the UI
+toggle**: Real-time → live OpenSky (anonymous if no creds), Demo → plays the planted replay from the
+start. `INTERVAL=1.0 bin/pipeline` for a faster replay.
 
 **End-to-end smoke test (demo insurance):**
 ```bash

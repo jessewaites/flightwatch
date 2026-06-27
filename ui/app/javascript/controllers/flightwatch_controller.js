@@ -152,13 +152,15 @@ export default class extends Controller {
       const marker = this.markers.get(plane.icao24)
       const icon = this.planeIcon(plane)
       const position = [plane.lat, plane.lon]
+      const tip = this.planeTooltip(plane)
 
       if (marker) {
         marker.setLatLng(position)
         marker.setIcon(icon)
+        marker.setTooltipContent(tip)
       } else {
         const next = L.marker(position, { icon }).addTo(this.map)
-        next.bindTooltip(plane.callsign || plane.icao24, { direction: "top", opacity: 0.92 })
+        next.bindTooltip(tip, { direction: "top", opacity: 0.95, className: "plane-tooltip" })
         this.markers.set(plane.icao24, next)
       }
     })
@@ -184,6 +186,32 @@ export default class extends Controller {
     if (this.focusIcao === plane.icao24) return "focus"
     if (plane.state === "flagged" || this.flagFor(plane.icao24)) return "flagged"
     return "normal"
+  }
+
+  // Hover tooltip: the watcher's per-plane telemetry, plus the flag rule if it's flagged.
+  planeTooltip(plane) {
+    const title = this.escapeHtml((plane.callsign || "").trim() || plane.icao24)
+    const num = (v) => v !== null && v !== undefined && v !== "" && !Number.isNaN(Number(v))
+
+    const parts = []
+    if (plane.on_ground) parts.push("on ground")
+    if (num(plane.baro_alt_ft)) parts.push(`${Math.round(plane.baro_alt_ft).toLocaleString()} ft`)
+    if (num(plane.velocity_kt)) parts.push(`${Math.round(plane.velocity_kt)} kt`)
+    const hdg = plane.heading ?? plane.true_track
+    if (num(hdg)) parts.push(`${Math.round(hdg)}°`)
+    if (num(plane.vert_rate_fpm) && Math.round(plane.vert_rate_fpm) !== 0) {
+      const vs = Math.round(plane.vert_rate_fpm)
+      parts.push(`${vs > 0 ? "+" : ""}${vs.toLocaleString()} fpm`)
+    }
+    if (plane.squawk) parts.push(`sq ${this.escapeHtml(plane.squawk)}`)
+
+    const flag = this.flagFor(plane.icao24)
+    let header = title
+    if (plane.state === "flagged" || flag) {
+      header = `${title} &mdash; ${this.escapeHtml(flag && flag.rule ? this.humanize(flag.rule) : "Flagged")}`
+    }
+
+    return `<div class="plane-tip"><strong>${header}</strong>${parts.length ? `<br><span>${parts.join(" · ")}</span>` : ""}</div>`
   }
 
   connectCable() {

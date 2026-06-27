@@ -11,7 +11,9 @@
 set -uo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
-WS="$ROOT/workspace"
+# Optional workspace path (default: the live workspace). Pass a throwaway dir to avoid touching it.
+WS="${1:-$ROOT/workspace}"
+mkdir -p "$WS"
 
 count() { ls "$WS/$1"/*.json 2>/dev/null | wc -l | tr -d ' '; }
 
