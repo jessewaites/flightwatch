@@ -600,6 +600,7 @@ button {
   min-height: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: minmax(0, 1fr); /* bound the row so the media fits to height, no overflow */
   gap: 12px;
 }
 
@@ -630,6 +631,7 @@ button {
 @media (max-width: 980px) {
   .credits-stage {
     grid-template-columns: 1fr;
+    grid-template-rows: auto auto; /* stack and let the page scroll on small screens */
   }
 }
 
