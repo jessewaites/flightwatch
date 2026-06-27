@@ -31,8 +31,11 @@ module FlightWatch
     MODEL_PROMPT = <<~PROMPT.freeze
       You are the Synthesizer in a multi-agent airspace monitor over Boston. Deterministic code has already
       clustered related flags by area, airport, and time window. You receive one cluster with member aircraft,
-      their flags, and the Investigator's verdicts. Name the emergent situation it represents and explain it in
-      one line.
+      their flags, the Investigator's verdicts, and optional Boston weather context. Name the emergent situation
+      it represents and explain it in one line.
+
+      Use weather_context only as background. Mention it briefly when it helps explain the cluster, but do not
+      invent weather causes beyond the supplied context.
 
       Respond with ONLY this JSON:
       {"kind":"ground_stop|weather_diversion|runway_closure","airport":"KBOS","summary":"one plain line"}
@@ -118,7 +121,8 @@ module FlightWatch
     end
 
     def interpret_cluster(cluster, verdicts)
-      model_result = @use_model ? call_model(cluster, verdicts) : nil
+      weather_context = load_weather_context(cluster[:airport])
+      model_result = @use_model ? call_model(cluster, verdicts, weather_context) : nil
       kind = valid_kind(model_result && model_result["kind"]) || cluster[:kind_hint] || heuristic_kind(cluster, verdicts)
       airport = model_result && model_result["airport"].to_s.strip != "" ? model_result["airport"].to_s.strip : cluster[:airport]
       icao24s = cluster[:flags].map { |flag| flag["icao24"] }.uniq.sort
@@ -126,7 +130,7 @@ module FlightWatch
 
       summary = model_result && model_result["summary"].to_s.strip
       summary = nil if summary == ""
-      summary ||= fallback_summary(kind, airport, cluster, verdicts)
+      summary ||= fallback_summary(kind, airport, cluster, verdicts, weather_context)
 
       {
         "id" => situation_id(airport, kind, ts),
@@ -146,6 +150,10 @@ module FlightWatch
 
     def verdicts_dir
       File.join(workspace_dir, "verdicts")
+    end
+
+    def weather_dir
+      File.join(workspace_dir, "weather")
     end
 
     def situations_dir
@@ -170,6 +178,19 @@ module FlightWatch
       rescue JSON::ParserError, Errno::ENOENT => e
         observe("read_skip", path: path, error: "#{e.class}: #{e.message}")
       end
+    end
+
+    def load_weather_context(airport)
+      path = File.join(weather_dir, "#{airport.to_s.downcase}.json")
+      return nil unless File.exist?(path)
+
+      context = JSON.parse(File.read(path))
+      return nil unless context.is_a?(Hash) && context["summary"].to_s.strip != ""
+
+      context
+    rescue JSON::ParserError, Errno::ENOENT => e
+      observe("weather_context_skip", path: path, error: "#{e.class}: #{e.message}")
+      nil
     end
 
     def verdicts_by_aircraft(verdicts)
@@ -209,11 +230,11 @@ module FlightWatch
       2.0 * earth_radius_nm * Math.atan2(Math.sqrt(a), Math.sqrt(1.0 - a))
     end
 
-    def call_model(cluster, verdicts)
+    def call_model(cluster, verdicts, weather_context)
       llm = model || default_model
       return nil unless llm
 
-      content = JSON.pretty_generate(cluster_payload(cluster, verdicts))
+      content = JSON.pretty_generate(cluster_payload(cluster, verdicts, weather_context))
       prompt = [skill_text, MODEL_PROMPT].compact.join("\n\n")
       response = if llm.respond_to?(:ask)
                    llm.ask("#{prompt}\n\nCluster:\n#{content}")
@@ -241,7 +262,7 @@ module FlightWatch
       nil
     end
 
-    def cluster_payload(cluster, verdicts)
+    def cluster_payload(cluster, verdicts, weather_context)
       {
         airport: cluster[:airport],
         kind_hint: cluster[:kind_hint],
@@ -249,7 +270,9 @@ module FlightWatch
         radius_nm: CLUSTER_RADIUS_NM,
         flags: cluster[:flags],
         verdicts: cluster[:flags].map { |flag| verdicts[[flag["icao24"], flag["ts"]]] }.compact
-      }
+      }.tap do |payload|
+        payload[:weather_context] = weather_context if weather_context
+      end
     end
 
     def parse_model_json(response)
@@ -280,19 +303,21 @@ module FlightWatch
       "ground_stop"
     end
 
-    def fallback_summary(kind, airport, cluster, verdicts)
+    def fallback_summary(kind, airport, cluster, verdicts, weather_context = nil)
       rule_counts = cluster[:flags].each_with_object(Hash.new(0)) { |flag, counts| counts[flag["rule"]] += 1 }
       verdict_count = cluster[:flags].count { |flag| verdicts.key?([flag["icao24"], flag["ts"]]) }
       count_text = rule_counts.sort.map { |rule, count| "#{count} #{rule.tr("_", " ")}" }.join(" + ")
       verdict_text = verdict_count.positive? ? " with #{verdict_count} investigator verdicts" : ""
+      weather_text = weather_context && weather_context["summary"].to_s.strip
+      weather_clause = weather_text && weather_text != "" ? " Weather context: #{weather_text}" : ""
 
       case kind
       when "weather_diversion"
-        "#{count_text} near #{airport} inside a two-minute window#{verdict_text}; pattern is consistent with weather diversion pressure."
+        "#{count_text} near #{airport} inside a two-minute window#{verdict_text}; pattern is consistent with weather diversion pressure.#{weather_clause}"
       when "runway_closure"
-        "#{count_text} near #{airport} inside a two-minute window#{verdict_text}; pattern is consistent with a runway closure."
+        "#{count_text} near #{airport} inside a two-minute window#{verdict_text}; pattern is consistent with a runway closure.#{weather_clause}"
       else
-        "#{count_text} near #{airport} inside a two-minute window#{verdict_text}; pattern is consistent with a possible ground stop."
+        "#{count_text} near #{airport} inside a two-minute window#{verdict_text}; pattern is consistent with a possible ground stop.#{weather_clause}"
       end
     end
 

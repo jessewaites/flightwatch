@@ -9,6 +9,7 @@
 #
 #   bin/pipeline                 # start the pipeline (investigator/synthesizer offline; ollama-optional)
 #   INTERVAL=1.0 bin/pipeline    # faster demo replay (default 1.5s/frame)
+#   WEATHER_OFFLINE=1 bin/pipeline  # use deterministic KBOS weather fixture
 #
 # Ctrl-C stops everything.
 
@@ -17,11 +18,14 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 WS="$ROOT/workspace"
 INTERVAL="${INTERVAL:-1.5}"
+WEATHER_INTERVAL="${WEATHER_INTERVAL:-300}"
+WEATHER_OFFLINE_FLAG=""
+[ "${WEATHER_OFFLINE:-}" = "1" ] && WEATHER_OFFLINE_FLAG="--offline"
 
 echo "FlightWatch — starting agent pipeline (source is controlled by the UI toggle)"
 
 # Reset the runtime bus for a clean start (keeps the dir structure / .gitkeep).
-for d in flags verdicts situations tracks observe; do
+for d in flags verdicts situations tracks observe weather; do
   mkdir -p "$WS/$d"
   find "$WS/$d" -name '*.json' -delete 2>/dev/null
   find "$WS/$d" -name '*.jsonl' -delete 2>/dev/null
@@ -44,10 +48,11 @@ pids=()
 cleanup() { echo; echo "stopping pipeline..."; for p in "${pids[@]}"; do kill "$p" 2>/dev/null || true; done; wait 2>/dev/null; }
 trap cleanup EXIT INT TERM
 
-echo "  starting investigator (offline) + synthesizer (offline) + watcher + frame producer..."
+echo "  starting investigator (offline) + synthesizer (offline) + watcher + weather + frame producer..."
 ruby agents/investigator.rb --workspace "$WS" --offline --poll 0.4 & pids+=($!)
 ruby agents/synthesizer.rb  --workspace "$WS" --offline           & pids+=($!)
 ruby agents/watcher.rb      --workspace "$WS" --tracks "$WS/tracks" --poll 0.4 $WATCHER_SKILL & pids+=($!)
+ruby bin/weather_context.rb --workspace "$WS" --interval "$WEATHER_INTERVAL" $WEATHER_OFFLINE_FLAG & pids+=($!)
 ruby bin/produce_frames.rb  --workspace "$WS" --interval "$INTERVAL" --daemon & pids+=($!)
 
 echo "pipeline up. Toggle Real-time/Demo in the UI to choose the source. Ctrl-C to stop."

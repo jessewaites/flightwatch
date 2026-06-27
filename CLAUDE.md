@@ -8,7 +8,8 @@ Build Day (Lane 3). The parallel build is **done** — all six tracks (A–F) me
 ## What it is, in one breath
 **Watcher** (local granite4:micro) flags planes by deterministic rule → **Investigator** (frontier
 Claude) judges each flag → **Synthesizer** (frontier) names situations across flags. Agents talk ONLY
-through the `workspace/` file bus. A Rails + Leaflet UI renders it live. The demo runs off a
+through the `workspace/` file bus. A small weather producer writes Open-Meteo MCP context to that same bus.
+A Rails + Leaflet UI renders it live. The demo runs off a
 pre-recorded + planted capture (`--offline`), never the live sky.
 
 ## Where things live
@@ -18,10 +19,10 @@ pre-recorded + planted capture (`--offline`), never the live sky.
 | `agents/` | `watcher.rb`, `investigator.rb`, `synthesizer.rb` + their `*.md` identity docs. |
 | `skills/` | the 3 validated skills (`agentskills validate ./skills/<name>`). |
 | `data/` | OpenSky capture, replay, rolling buffer, raw + planted JSONL. |
-| `enrichment/` | METAR + airport lookups (Investigator). |
+| `enrichment/` | METAR + airport lookups (Investigator), Open-Meteo weather context (Synthesizer). |
 | `evals/` | planting script + the two gates; emits `evals/evals.json` + root `benchmark.json`. |
 | `ui/` | Rails + Action Cable + Leaflet + Tailwind dashboard. |
-| `workspace/` | runtime file bus: `flags/ verdicts/ situations/ control/ tracks/ observe/` (contents gitignored). |
+| `workspace/` | runtime file bus: `flags/ verdicts/ situations/ control/ tracks/ weather/ observe/` (contents gitignored). |
 
 ## Still the most important thing: the eval gate
 A skill scores ONLY if it beats a no-skill baseline. **That delta is the whole game.** The scored
@@ -32,7 +33,8 @@ this number first.
 ## Decisions that are settled — do NOT relitigate
 - **Ruby + RubyLLM.** Not Python/LangChain. (`detect.rb` may be Python behind the frozen signature.)
 - **No database.** State = `workspace/` JSON + in-memory rolling buffer. No Postgres/ActiveRecord.
-- **Delegation is the file bus** — not in-process calls, not MCP, not sub-agents.
+- **Delegation is the file bus** — not in-process calls, not MCP between agents, not sub-agents. The only
+  MCP usage is the external Open-Meteo weather producer writing `workspace/weather/kbos.json`.
 - **Detection is deterministic code; judgment is the model.** Never make the watcher "detect" with an LLM.
 - **Simpler beats clever.** Don't add agents/frameworks/services. The system is complete; from here it's tuning.
 - **Contracts are frozen.** If something genuinely needs a schema change, change `contracts/validate.rb`

@@ -31,11 +31,21 @@ The clustering step is deterministic Ruby code:
 
 - It reads validated `workspace/flags/*.json`.
 - It joins available Investigator verdicts from `workspace/verdicts/*.json`.
+- It may include `workspace/weather/kbos.json` as `weather_context`.
 - It filters to flags near the airport.
 - It groups only related rule families.
 - It requires at least three unique aircraft in the time and distance window.
 
 Do not second-guess geometry or membership. Interpret the supplied cluster as the current snapshot.
+
+## Weather Context
+
+When `weather_context` is present, it is a compact Open-Meteo snapshot for the Boston Logan area.
+Use it as background only:
+
+- Mention it briefly in `summary` when it helps explain a weather-diversion or flow-control pattern.
+- Treat benign weather as context, not proof that weather caused the cluster.
+- Do not invent storms, low visibility, wind shear, or runway effects unless the supplied context or verdicts say so.
 
 ## Situation Templates
 
