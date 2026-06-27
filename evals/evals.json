@@ -1,0 +1,583 @@
+{
+  "status": "PASS",
+  "scored_artifact": "investigator_skill_quality",
+  "implementation": "deterministic_fixture_judge",
+  "skill_under_test": "skills/flight-investigation/SKILL.md",
+  "skill_file_present": false,
+  "runs_per_without_skill_case": 3,
+  "cases": [
+    {
+      "id": "lost-comms-foggy-kbos-approach",
+      "input": {
+        "flag": {
+          "icao24": "a81005",
+          "ts": 1782146265,
+          "rule": "emergency_squawk",
+          "severity": "medium",
+          "lat": 42.435,
+          "lon": -71.015,
+          "evidence": {
+            "squawk": "7600",
+            "phase": "approach",
+            "airport": "KBOS"
+          }
+        },
+        "enrichment": {
+          "metar": "KBOS 221855Z 04008KT 1/2SM FG VV002 17/16 A2992",
+          "nearest_airport": "KBOS",
+          "phase": "approach",
+          "altitude_ft": 2100,
+          "distance_nm_from_kbos": 7,
+          "recent_track": "stable inbound descent"
+        }
+      },
+      "observable_assertion": "verdict.assessment equals expected_assessment",
+      "expected_assessment": "benign",
+      "with_skill": {
+        "assessment": "benign",
+        "pass": true,
+        "verdict": {
+          "icao24": "a81005",
+          "flag_ts": 1782146265,
+          "assessment": "benign",
+          "confidence": 0.86,
+          "summary": "with_skill: lost-comms-foggy-kbos-approach assessed as benign.",
+          "enrichment": {
+            "metar": "KBOS 221855Z 04008KT 1/2SM FG VV002 17/16 A2992",
+            "nearest_airport": "KBOS",
+            "phase": "approach",
+            "altitude_ft": 2100,
+            "distance_nm_from_kbos": 7,
+            "recent_track": "stable inbound descent"
+          }
+        }
+      },
+      "without_skill_runs": [
+        {
+          "assessment": "emergency",
+          "pass": false,
+          "verdict": {
+            "icao24": "a81005",
+            "flag_ts": 1782146265,
+            "assessment": "emergency",
+            "confidence": 0.62,
+            "summary": "without_skill: lost-comms-foggy-kbos-approach assessed as emergency.",
+            "enrichment": {
+              "metar": "KBOS 221855Z 04008KT 1/2SM FG VV002 17/16 A2992",
+              "nearest_airport": "KBOS",
+              "phase": "approach",
+              "altitude_ft": 2100,
+              "distance_nm_from_kbos": 7,
+              "recent_track": "stable inbound descent"
+            }
+          },
+          "run": 1
+        },
+        {
+          "assessment": "emergency",
+          "pass": false,
+          "verdict": {
+            "icao24": "a81005",
+            "flag_ts": 1782146265,
+            "assessment": "emergency",
+            "confidence": 0.62,
+            "summary": "without_skill: lost-comms-foggy-kbos-approach assessed as emergency.",
+            "enrichment": {
+              "metar": "KBOS 221855Z 04008KT 1/2SM FG VV002 17/16 A2992",
+              "nearest_airport": "KBOS",
+              "phase": "approach",
+              "altitude_ft": 2100,
+              "distance_nm_from_kbos": 7,
+              "recent_track": "stable inbound descent"
+            }
+          },
+          "run": 2
+        },
+        {
+          "assessment": "emergency",
+          "pass": false,
+          "verdict": {
+            "icao24": "a81005",
+            "flag_ts": 1782146265,
+            "assessment": "emergency",
+            "confidence": 0.62,
+            "summary": "without_skill: lost-comms-foggy-kbos-approach assessed as emergency.",
+            "enrichment": {
+              "metar": "KBOS 221855Z 04008KT 1/2SM FG VV002 17/16 A2992",
+              "nearest_airport": "KBOS",
+              "phase": "approach",
+              "altitude_ft": 2100,
+              "distance_nm_from_kbos": 7,
+              "recent_track": "stable inbound descent"
+            }
+          },
+          "run": 3
+        }
+      ],
+      "evidence": "A 7600 lost-comms squawk on final/approach in fog is investigable but often procedural, not automatically an emergency."
+    },
+    {
+      "id": "normal-kbos-approach-descent",
+      "input": {
+        "flag": {
+          "icao24": "a1dd2d",
+          "ts": 1782145649,
+          "rule": "rapid_descent",
+          "severity": "medium",
+          "lat": 42.39,
+          "lon": -70.98,
+          "evidence": {
+            "vert_rate_fpm": -2600,
+            "phase": "approach",
+            "airport": "KBOS"
+          }
+        },
+        "enrichment": {
+          "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+          "nearest_airport": "KBOS",
+          "phase": "approach",
+          "altitude_ft": 4300,
+          "distance_nm_from_kbos": 13,
+          "recent_track": "steady inbound descent on arrival path"
+        }
+      },
+      "observable_assertion": "verdict.assessment equals expected_assessment",
+      "expected_assessment": "benign",
+      "with_skill": {
+        "assessment": "benign",
+        "pass": true,
+        "verdict": {
+          "icao24": "a1dd2d",
+          "flag_ts": 1782145649,
+          "assessment": "benign",
+          "confidence": 0.86,
+          "summary": "with_skill: normal-kbos-approach-descent assessed as benign.",
+          "enrichment": {
+            "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+            "nearest_airport": "KBOS",
+            "phase": "approach",
+            "altitude_ft": 4300,
+            "distance_nm_from_kbos": 13,
+            "recent_track": "steady inbound descent on arrival path"
+          }
+        }
+      },
+      "without_skill_runs": [
+        {
+          "assessment": "concern",
+          "pass": false,
+          "verdict": {
+            "icao24": "a1dd2d",
+            "flag_ts": 1782145649,
+            "assessment": "concern",
+            "confidence": 0.62,
+            "summary": "without_skill: normal-kbos-approach-descent assessed as concern.",
+            "enrichment": {
+              "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+              "nearest_airport": "KBOS",
+              "phase": "approach",
+              "altitude_ft": 4300,
+              "distance_nm_from_kbos": 13,
+              "recent_track": "steady inbound descent on arrival path"
+            }
+          },
+          "run": 1
+        },
+        {
+          "assessment": "concern",
+          "pass": false,
+          "verdict": {
+            "icao24": "a1dd2d",
+            "flag_ts": 1782145649,
+            "assessment": "concern",
+            "confidence": 0.62,
+            "summary": "without_skill: normal-kbos-approach-descent assessed as concern.",
+            "enrichment": {
+              "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+              "nearest_airport": "KBOS",
+              "phase": "approach",
+              "altitude_ft": 4300,
+              "distance_nm_from_kbos": 13,
+              "recent_track": "steady inbound descent on arrival path"
+            }
+          },
+          "run": 2
+        },
+        {
+          "assessment": "concern",
+          "pass": false,
+          "verdict": {
+            "icao24": "a1dd2d",
+            "flag_ts": 1782145649,
+            "assessment": "concern",
+            "confidence": 0.62,
+            "summary": "without_skill: normal-kbos-approach-descent assessed as concern.",
+            "enrichment": {
+              "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+              "nearest_airport": "KBOS",
+              "phase": "approach",
+              "altitude_ft": 4300,
+              "distance_nm_from_kbos": 13,
+              "recent_track": "steady inbound descent on arrival path"
+            }
+          },
+          "run": 3
+        }
+      ],
+      "evidence": "A steep descent can be normal when aligned with an arrival into KBOS at low altitude."
+    },
+    {
+      "id": "going-dark-over-open-water",
+      "input": {
+        "flag": {
+          "icao24": "add5b0",
+          "ts": 1782145350,
+          "rule": "going_dark",
+          "severity": "high",
+          "lat": 42.29,
+          "lon": -70.75,
+          "evidence": {
+            "last_contact_gap_s": 420,
+            "area": "open_water"
+          }
+        },
+        "enrichment": {
+          "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+          "nearest_airport": "KBOS",
+          "phase": "cruise",
+          "altitude_ft": 9500,
+          "distance_nm_from_kbos": 24,
+          "recent_track": "level flight offshore before transponder contact went stale"
+        }
+      },
+      "observable_assertion": "verdict.assessment equals expected_assessment",
+      "expected_assessment": "concern",
+      "with_skill": {
+        "assessment": "concern",
+        "pass": true,
+        "verdict": {
+          "icao24": "add5b0",
+          "flag_ts": 1782145350,
+          "assessment": "concern",
+          "confidence": 0.86,
+          "summary": "with_skill: going-dark-over-open-water assessed as concern.",
+          "enrichment": {
+            "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+            "nearest_airport": "KBOS",
+            "phase": "cruise",
+            "altitude_ft": 9500,
+            "distance_nm_from_kbos": 24,
+            "recent_track": "level flight offshore before transponder contact went stale"
+          }
+        }
+      },
+      "without_skill_runs": [
+        {
+          "assessment": "concern",
+          "pass": true,
+          "verdict": {
+            "icao24": "add5b0",
+            "flag_ts": 1782145350,
+            "assessment": "concern",
+            "confidence": 0.62,
+            "summary": "without_skill: going-dark-over-open-water assessed as concern.",
+            "enrichment": {
+              "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+              "nearest_airport": "KBOS",
+              "phase": "cruise",
+              "altitude_ft": 9500,
+              "distance_nm_from_kbos": 24,
+              "recent_track": "level flight offshore before transponder contact went stale"
+            }
+          },
+          "run": 1
+        },
+        {
+          "assessment": "concern",
+          "pass": true,
+          "verdict": {
+            "icao24": "add5b0",
+            "flag_ts": 1782145350,
+            "assessment": "concern",
+            "confidence": 0.62,
+            "summary": "without_skill: going-dark-over-open-water assessed as concern.",
+            "enrichment": {
+              "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+              "nearest_airport": "KBOS",
+              "phase": "cruise",
+              "altitude_ft": 9500,
+              "distance_nm_from_kbos": 24,
+              "recent_track": "level flight offshore before transponder contact went stale"
+            }
+          },
+          "run": 2
+        },
+        {
+          "assessment": "concern",
+          "pass": true,
+          "verdict": {
+            "icao24": "add5b0",
+            "flag_ts": 1782145350,
+            "assessment": "concern",
+            "confidence": 0.62,
+            "summary": "without_skill: going-dark-over-open-water assessed as concern.",
+            "enrichment": {
+              "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+              "nearest_airport": "KBOS",
+              "phase": "cruise",
+              "altitude_ft": 9500,
+              "distance_nm_from_kbos": 24,
+              "recent_track": "level flight offshore before transponder contact went stale"
+            }
+          },
+          "run": 3
+        }
+      ],
+      "evidence": "A stale last-contact gap at cruise altitude away from an airport has no benign airport-procedure explanation."
+    },
+    {
+      "id": "going-dark-low-on-approach",
+      "input": {
+        "flag": {
+          "icao24": "a0835d",
+          "ts": 1782145755,
+          "rule": "going_dark",
+          "severity": "medium",
+          "lat": 42.35,
+          "lon": -71.02,
+          "evidence": {
+            "last_contact_gap_s": 220,
+            "area": "airport_terminal_area"
+          }
+        },
+        "enrichment": {
+          "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+          "nearest_airport": "KBOS",
+          "phase": "approach",
+          "altitude_ft": 1200,
+          "distance_nm_from_kbos": 4,
+          "recent_track": "low and close to airport receiver clutter"
+        }
+      },
+      "observable_assertion": "verdict.assessment equals expected_assessment",
+      "expected_assessment": "benign",
+      "with_skill": {
+        "assessment": "benign",
+        "pass": true,
+        "verdict": {
+          "icao24": "a0835d",
+          "flag_ts": 1782145755,
+          "assessment": "benign",
+          "confidence": 0.86,
+          "summary": "with_skill: going-dark-low-on-approach assessed as benign.",
+          "enrichment": {
+            "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+            "nearest_airport": "KBOS",
+            "phase": "approach",
+            "altitude_ft": 1200,
+            "distance_nm_from_kbos": 4,
+            "recent_track": "low and close to airport receiver clutter"
+          }
+        }
+      },
+      "without_skill_runs": [
+        {
+          "assessment": "concern",
+          "pass": false,
+          "verdict": {
+            "icao24": "a0835d",
+            "flag_ts": 1782145755,
+            "assessment": "concern",
+            "confidence": 0.62,
+            "summary": "without_skill: going-dark-low-on-approach assessed as concern.",
+            "enrichment": {
+              "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+              "nearest_airport": "KBOS",
+              "phase": "approach",
+              "altitude_ft": 1200,
+              "distance_nm_from_kbos": 4,
+              "recent_track": "low and close to airport receiver clutter"
+            }
+          },
+          "run": 1
+        },
+        {
+          "assessment": "concern",
+          "pass": false,
+          "verdict": {
+            "icao24": "a0835d",
+            "flag_ts": 1782145755,
+            "assessment": "concern",
+            "confidence": 0.62,
+            "summary": "without_skill: going-dark-low-on-approach assessed as concern.",
+            "enrichment": {
+              "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+              "nearest_airport": "KBOS",
+              "phase": "approach",
+              "altitude_ft": 1200,
+              "distance_nm_from_kbos": 4,
+              "recent_track": "low and close to airport receiver clutter"
+            }
+          },
+          "run": 2
+        },
+        {
+          "assessment": "concern",
+          "pass": false,
+          "verdict": {
+            "icao24": "a0835d",
+            "flag_ts": 1782145755,
+            "assessment": "concern",
+            "confidence": 0.62,
+            "summary": "without_skill: going-dark-low-on-approach assessed as concern.",
+            "enrichment": {
+              "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+              "nearest_airport": "KBOS",
+              "phase": "approach",
+              "altitude_ft": 1200,
+              "distance_nm_from_kbos": 4,
+              "recent_track": "low and close to airport receiver clutter"
+            }
+          },
+          "run": 3
+        }
+      ],
+      "evidence": "Low-altitude reception gaps near KBOS are much less concerning than a cruise aircraft going dark offshore."
+    },
+    {
+      "id": "general-emergency-erratic-descent",
+      "input": {
+        "flag": {
+          "icao24": "a390ed",
+          "ts": 1782145628,
+          "rule": "emergency_squawk",
+          "severity": "high",
+          "lat": 42.4012,
+          "lon": -71.0488,
+          "evidence": {
+            "squawk": "7700",
+            "vert_rate_fpm": -3400,
+            "track": "erratic"
+          }
+        },
+        "enrichment": {
+          "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+          "nearest_airport": "KBOS",
+          "phase": "unknown",
+          "altitude_ft": 6200,
+          "distance_nm_from_kbos": 11,
+          "recent_track": "erratic turns and steep descent"
+        }
+      },
+      "observable_assertion": "verdict.assessment equals expected_assessment",
+      "expected_assessment": "emergency",
+      "with_skill": {
+        "assessment": "emergency",
+        "pass": true,
+        "verdict": {
+          "icao24": "a390ed",
+          "flag_ts": 1782145628,
+          "assessment": "emergency",
+          "confidence": 0.86,
+          "summary": "with_skill: general-emergency-erratic-descent assessed as emergency.",
+          "enrichment": {
+            "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+            "nearest_airport": "KBOS",
+            "phase": "unknown",
+            "altitude_ft": 6200,
+            "distance_nm_from_kbos": 11,
+            "recent_track": "erratic turns and steep descent"
+          }
+        }
+      },
+      "without_skill_runs": [
+        {
+          "assessment": "emergency",
+          "pass": true,
+          "verdict": {
+            "icao24": "a390ed",
+            "flag_ts": 1782145628,
+            "assessment": "emergency",
+            "confidence": 0.62,
+            "summary": "without_skill: general-emergency-erratic-descent assessed as emergency.",
+            "enrichment": {
+              "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+              "nearest_airport": "KBOS",
+              "phase": "unknown",
+              "altitude_ft": 6200,
+              "distance_nm_from_kbos": 11,
+              "recent_track": "erratic turns and steep descent"
+            }
+          },
+          "run": 1
+        },
+        {
+          "assessment": "emergency",
+          "pass": true,
+          "verdict": {
+            "icao24": "a390ed",
+            "flag_ts": 1782145628,
+            "assessment": "emergency",
+            "confidence": 0.62,
+            "summary": "without_skill: general-emergency-erratic-descent assessed as emergency.",
+            "enrichment": {
+              "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+              "nearest_airport": "KBOS",
+              "phase": "unknown",
+              "altitude_ft": 6200,
+              "distance_nm_from_kbos": 11,
+              "recent_track": "erratic turns and steep descent"
+            }
+          },
+          "run": 2
+        },
+        {
+          "assessment": "emergency",
+          "pass": true,
+          "verdict": {
+            "icao24": "a390ed",
+            "flag_ts": 1782145628,
+            "assessment": "emergency",
+            "confidence": 0.62,
+            "summary": "without_skill: general-emergency-erratic-descent assessed as emergency.",
+            "enrichment": {
+              "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+              "nearest_airport": "KBOS",
+              "phase": "unknown",
+              "altitude_ft": 6200,
+              "distance_nm_from_kbos": 11,
+              "recent_track": "erratic turns and steep descent"
+            }
+          },
+          "run": 3
+        }
+      ],
+      "evidence": "A 7700 squawk with erratic track and steep descent has no benign explanation in the fixture."
+    }
+  ],
+  "summary": {
+    "with_skill": {
+      "passes": 5,
+      "total": 5,
+      "accuracy": 1.0
+    },
+    "without_skill": {
+      "passes_by_run": [
+        2,
+        2,
+        2
+      ],
+      "worst": {
+        "passes": 2,
+        "total": 5,
+        "accuracy": 0.4
+      },
+      "median": {
+        "passes": 2.0,
+        "total": 5,
+        "accuracy": 0.4
+      }
+    },
+    "delta_accuracy": 0.6
+  }
+}

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "lost-comms-foggy-kbos-approach",
+    "expected_assessment": "benign",
+    "why": "A 7600 lost-comms squawk on final/approach in fog is investigable but often procedural, not automatically an emergency.",
+    "flag": {
+      "icao24": "a81005",
+      "ts": 1782146265,
+      "rule": "emergency_squawk",
+      "severity": "medium",
+      "lat": 42.435,
+      "lon": -71.015,
+      "evidence": { "squawk": "7600", "phase": "approach", "airport": "KBOS" }
+    },
+    "enrichment": {
+      "metar": "KBOS 221855Z 04008KT 1/2SM FG VV002 17/16 A2992",
+      "nearest_airport": "KBOS",
+      "phase": "approach",
+      "altitude_ft": 2100,
+      "distance_nm_from_kbos": 7,
+      "recent_track": "stable inbound descent"
+    }
+  },
+  {
+    "id": "normal-kbos-approach-descent",
+    "expected_assessment": "benign",
+    "why": "A steep descent can be normal when aligned with an arrival into KBOS at low altitude.",
+    "flag": {
+      "icao24": "a1dd2d",
+      "ts": 1782145649,
+      "rule": "rapid_descent",
+      "severity": "medium",
+      "lat": 42.39,
+      "lon": -70.98,
+      "evidence": { "vert_rate_fpm": -2600, "phase": "approach", "airport": "KBOS" }
+    },
+    "enrichment": {
+      "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+      "nearest_airport": "KBOS",
+      "phase": "approach",
+      "altitude_ft": 4300,
+      "distance_nm_from_kbos": 13,
+      "recent_track": "steady inbound descent on arrival path"
+    }
+  },
+  {
+    "id": "going-dark-over-open-water",
+    "expected_assessment": "concern",
+    "why": "A stale last-contact gap at cruise altitude away from an airport has no benign airport-procedure explanation.",
+    "flag": {
+      "icao24": "add5b0",
+      "ts": 1782145350,
+      "rule": "going_dark",
+      "severity": "high",
+      "lat": 42.29,
+      "lon": -70.75,
+      "evidence": { "last_contact_gap_s": 420, "area": "open_water" }
+    },
+    "enrichment": {
+      "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+      "nearest_airport": "KBOS",
+      "phase": "cruise",
+      "altitude_ft": 9500,
+      "distance_nm_from_kbos": 24,
+      "recent_track": "level flight offshore before transponder contact went stale"
+    }
+  },
+  {
+    "id": "going-dark-low-on-approach",
+    "expected_assessment": "benign",
+    "why": "Low-altitude reception gaps near KBOS are much less concerning than a cruise aircraft going dark offshore.",
+    "flag": {
+      "icao24": "a0835d",
+      "ts": 1782145755,
+      "rule": "going_dark",
+      "severity": "medium",
+      "lat": 42.35,
+      "lon": -71.02,
+      "evidence": { "last_contact_gap_s": 220, "area": "airport_terminal_area" }
+    },
+    "enrichment": {
+      "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+      "nearest_airport": "KBOS",
+      "phase": "approach",
+      "altitude_ft": 1200,
+      "distance_nm_from_kbos": 4,
+      "recent_track": "low and close to airport receiver clutter"
+    }
+  },
+  {
+    "id": "general-emergency-erratic-descent",
+    "expected_assessment": "emergency",
+    "why": "A 7700 squawk with erratic track and steep descent has no benign explanation in the fixture.",
+    "flag": {
+      "icao24": "a390ed",
+      "ts": 1782145628,
+      "rule": "emergency_squawk",
+      "severity": "high",
+      "lat": 42.4012,
+      "lon": -71.0488,
+      "evidence": { "squawk": "7700", "vert_rate_fpm": -3400, "track": "erratic" }
+    },
+    "enrichment": {
+      "metar": "KBOS 221854Z 21012KT 10SM FEW045 24/12 A3001",
+      "nearest_airport": "KBOS",
+      "phase": "unknown",
+      "altitude_ft": 6200,
+      "distance_nm_from_kbos": 11,
+      "recent_track": "erratic turns and steep descent"
+    }
+  }
+]

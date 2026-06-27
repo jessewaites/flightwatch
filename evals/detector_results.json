@@ -1,0 +1,74 @@
+{
+  "status": "PASS",
+  "detector_mode": "reference",
+  "cases": [
+    {
+      "id": "emergency-squawk-7700",
+      "input": {
+        "target_icao24": "target7700",
+        "rule": "emergency_squawk",
+        "plant_frame": 1
+      },
+      "assertion": "strict rule+aircraft match at or after plant frame, no pre-fire, no clean-aircraft flags",
+      "pass": true,
+      "evidence": {
+        "first_match_frame": 1,
+        "match_count": 1,
+        "pre_fire_count": 0,
+        "clean_false_flag_count": 0,
+        "total_flags": 1
+      }
+    },
+    {
+      "id": "rapid-descent",
+      "input": {
+        "target_icao24": "targetrd",
+        "rule": "rapid_descent",
+        "plant_frame": 1
+      },
+      "assertion": "strict rule+aircraft match at or after plant frame, no pre-fire, no clean-aircraft flags",
+      "pass": true,
+      "evidence": {
+        "first_match_frame": 1,
+        "match_count": 1,
+        "pre_fire_count": 0,
+        "clean_false_flag_count": 0,
+        "total_flags": 1
+      }
+    },
+    {
+      "id": "going-dark-staleness",
+      "input": {
+        "target_icao24": "targetdark",
+        "rule": "going_dark",
+        "plant_frame": 2
+      },
+      "assertion": "strict rule+aircraft match at or after plant frame, no pre-fire, no clean-aircraft flags",
+      "pass": true,
+      "evidence": {
+        "first_match_frame": 2,
+        "match_count": 1,
+        "pre_fire_count": 0,
+        "clean_false_flag_count": 0,
+        "total_flags": 1
+      }
+    },
+    {
+      "id": "holding-pattern-heading-wrap",
+      "input": {
+        "target_icao24": "targethold",
+        "rule": "holding_pattern",
+        "plant_frame": 6
+      },
+      "assertion": "strict rule+aircraft match at or after plant frame, no pre-fire, no clean-aircraft flags",
+      "pass": true,
+      "evidence": {
+        "first_match_frame": 7,
+        "match_count": 1,
+        "pre_fire_count": 0,
+        "clean_false_flag_count": 0,
+        "total_flags": 1
+      }
+    }
+  ]
+}
