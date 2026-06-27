@@ -57,8 +57,11 @@
 
         <section class="panel feed-panel" data-flightwatch-target="panel" data-panel="synthesis" aria-label="Synthesis">
           <div class="panel-heading">
-            <p class="eyebrow">Synthesizer report</p>
-            <h2>Situation synthesis</h2>
+            <div>
+              <p class="eyebrow">Synthesizer report</p>
+              <h2>Situation synthesis</h2>
+            </div>
+            <button class="utility-button" type="button" data-flightwatch-target="synthesisButton" data-action="flightwatch#generateSynthesis">Generate</button>
           </div>
           <div id="synthesis-feed" class="feed-list">
             <% if @snapshot[:situations].any? %>

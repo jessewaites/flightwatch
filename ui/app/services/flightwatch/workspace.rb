@@ -1,5 +1,8 @@
 require "fileutils"
 require "json"
+require "securerandom"
+
+require Rails.root.join("..", "contracts", "validate").to_s
 
 module Flightwatch
   class Workspace
@@ -90,6 +93,26 @@ module Flightwatch
         source
       end
 
+      def generate_synthesis!
+        flags = read_collection("flags")
+        verdicts = read_collection("verdicts")
+        frame = read_frame(flags)
+        weather = read_weather_context("KBOS")
+        situation = build_current_synthesis(frame, flags, verdicts, weather)
+        ok, errors = FlightWatch::Contracts.validate(:situation, situation)
+        raise "invalid generated situation: #{errors.join(', ')}" unless ok
+
+        situations_dir = path.join("situations")
+        FileUtils.mkdir_p(situations_dir)
+        final_path = situations_dir.join("#{situation["id"]}.json")
+        tmp_path = situations_dir.join("#{situation["id"]}.#{Process.pid}.#{SecureRandom.hex(4)}.tmp")
+        File.write(tmp_path, JSON.pretty_generate(situation) + "\n")
+        File.rename(tmp_path, final_path)
+        situation
+      ensure
+        FileUtils.rm_f(tmp_path) if tmp_path && File.exist?(tmp_path)
+      end
+
       # Clear the runtime bus so a mode switch starts a clean run, regardless of whether the
       # producer is running. Keeps the map, feed, and pagination consistent with the bus.
       def reset_bus
@@ -140,6 +163,10 @@ module Flightwatch
         nil
       end
 
+      def read_weather_context(airport)
+        read_json(path.join("weather", "#{airport.to_s.downcase}.json"))
+      end
+
       # Sum the tokens an agent has logged to the observe event log (workspace/observe/run.jsonl).
       # The routing table is a reduction over this log, not a separate accounting path.
       def observe_tokens_for(agent)
@@ -178,6 +205,80 @@ module Flightwatch
 
       def anomaly_key(icao24, ts)
         "#{icao24}-#{ts}"
+      end
+
+      def build_current_synthesis(frame, flags, verdicts, weather)
+        ts = [frame["ts"], flags.first&.dig("ts"), verdicts.first&.dig("flag_ts"), Time.now.to_i].compact.map(&:to_i).max
+        recent_flags = recent_by_ts(flags, ts, "ts")
+        recent_verdicts = recent_by_ts(verdicts, ts, "flag_ts")
+        icao24s = (recent_flags.map { |flag| flag["icao24"] } + recent_verdicts.map { |verdict| verdict["icao24"] }).uniq.sort
+        icao24s = Array(frame["aircraft"]).filter_map { |plane| plane["icao24"] }.first(5) if icao24s.empty?
+
+        {
+          "id" => "kbos-current-synthesis-#{ts}-#{SecureRandom.hex(3)}",
+          "ts" => ts,
+          "kind" => synthesis_kind(recent_flags, recent_verdicts, weather),
+          "airport" => "KBOS",
+          "icao24s" => icao24s,
+          "summary" => synthesis_summary(frame, recent_flags, recent_verdicts, weather)
+        }
+      end
+
+      def recent_by_ts(collection, ts, field)
+        recent = collection.select { |item| item[field].to_i >= ts.to_i - 900 }
+        (recent.any? ? recent : collection).first(8)
+      end
+
+      def synthesis_kind(flags, verdicts, weather)
+        text = ([weather_summary(weather)] + verdicts.map { |verdict| verdict["summary"] }).compact.join(" ").downcase
+        rules = flags.map { |flag| flag["rule"] }
+
+        return "runway_closure" if text.match?(/runway|closure/)
+        return "weather_diversion" if text.match?(/storm|wind shear|gust|fog|low visibility|ifr|low ceiling|thunder|rain|snow|diversion/) || rules.include?("rapid_descent")
+
+        "ground_stop"
+      end
+
+      def synthesis_summary(frame, flags, verdicts, weather)
+        aircraft = Array(frame["aircraft"])
+        airborne = aircraft.count { |plane| !plane["on_ground"] }
+        flagged = flags.count
+        severities = flags.each_with_object(Hash.new(0)) { |flag, counts| counts[flag["severity"]] += 1 }
+        rules = flags.each_with_object(Hash.new(0)) { |flag, counts| counts[flag["rule"]] += 1 }
+        severity_text = counts_sentence(severities, "severity")
+        rule_text = counts_sentence(rules, "rule")
+        weather_text = weather_summary(weather)
+
+        paragraph_one = "KBOS is showing #{airborne} airborne aircraft in the current frame"
+        paragraph_one += " with #{flagged} recent watcher #{'flag'.pluralize(flagged)}" if flagged.positive?
+        paragraph_one += "."
+        paragraph_one += " The watcher mix is #{rule_text}; #{severity_text}." if flagged.positive?
+
+        paragraph_two = if verdicts.any?
+          verdict_bits = verdicts.first(4).map do |verdict|
+            "#{verdict["icao24"]}: #{verdict["assessment"]} (#{verdict["summary"]})"
+          end
+          "The most recent investigations say #{verdict_bits.to_sentence}."
+        else
+          "No investigator verdicts are available in the current window yet, so this synthesis is based on watcher output and the latest track frame."
+        end
+
+        paragraph_three = weather_text.to_s.strip
+        paragraph_three = paragraph_three.present? ? "Current weather context: #{paragraph_three}" : "No current KBOS weather context is present on the file bus."
+
+        [paragraph_one, paragraph_two, paragraph_three].join("\n\n")
+      end
+
+      def weather_summary(weather)
+        return nil unless weather.is_a?(Hash)
+
+        weather["summary"].presence || weather["metar"].presence || weather["raw"].presence
+      end
+
+      def counts_sentence(counts, label)
+        return "no #{label} counts" if counts.empty?
+
+        counts.sort.map { |key, count| "#{count} #{key.to_s.tr('_', ' ')}" }.to_sentence
       end
 
       def row(agent, model, route, tokens, cost, latency)

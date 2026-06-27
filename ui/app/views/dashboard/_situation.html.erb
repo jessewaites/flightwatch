@@ -6,6 +6,6 @@
     </div>
     <span class="status-pill"><%= Array(situation["icao24s"]).size %> aircraft</span>
   </div>
-  <p><%= situation["summary"] %></p>
+  <div class="situation-summary"><%= simple_format(situation["summary"]) %></div>
   <p class="metadata"><%= Array(situation["icao24s"]).join(", ") %></p>
 </article>

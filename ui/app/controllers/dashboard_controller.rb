@@ -27,4 +27,10 @@ class DashboardController < ApplicationController
 
     render json: { source: source }
   end
+
+  def synthesis
+    situation = Flightwatch::Workspace.generate_synthesis!
+
+    render json: { situation: situation }
+  end
 end
