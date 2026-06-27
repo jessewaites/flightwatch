@@ -97,7 +97,6 @@
           <tr>
             <th>Agent</th>
             <th>Model</th>
-            <th>Route</th>
             <th>Tokens</th>
             <th>$</th>
             <th>Latency</th>
@@ -108,7 +107,6 @@
             <tr class="<%= "total-row" if row[:agent] == "TOTAL" %>">
               <td><%= row[:agent] %></td>
               <td><%= row[:model] %></td>
-              <td><%= row[:route] %></td>
               <td><%= number_with_delimiter(row[:tokens]) %></td>
               <td><%= row[:cost].zero? ? "$0" : number_to_currency(row[:cost], precision: 3) %></td>
               <td><%= row[:latency] %></td>
